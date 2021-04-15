@@ -1,6 +1,3 @@
-" Basic Python-friendly Vim configuration. Colorscheme is changed from
-" 'default' to make screenshots look better in print.
-
 syntax on                       " Enable syntax highlighting.
 filetype plugin indent on       " Enable file type based indentation.
 set autoindent                  " Respect indentation when starting a new line.
