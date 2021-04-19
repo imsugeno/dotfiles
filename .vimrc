@@ -5,7 +5,6 @@ set expandtab                   " Expand tabs to spaces. Essential in Python.
 set tabstop=4                   " Number of spaces tab is counted for.
 set shiftwidth=4                " Number of spaces to use for autoindent.
 set backspace=2                 " Fix backspace behavior on most terminals.
-colorscheme murphy              " Change a colorscheme.
 set undofile                    " Save undos after file closed.
 set undodir=$HOME/.vim/undodir  " Save ubdofiles into a dir.
 packloadall                     " Load all plugins.
@@ -56,11 +55,8 @@ Plug 'mattn/vim-lsp-settings'
 Plug 'mattn/vim-lsp-icons'
 Plug 'hrsh7th/vim-vsnip'
 Plug 'hrsh7th/vim-vsnip-integ'
+Plug 'mattn/vim-goimports'
 call plug#end()
-
-" Setting of Kite
-set statusline=%<%f\ %h%m%r%{kite#statusline()}%=%-14.(%l,%c%V%)\ %P
-set laststatus=2  " always display the status line
 
 " Setting of python-syntax
 let g:python_highlight_all = 1
@@ -115,8 +111,7 @@ let g:lsp_settings['gopls'] = {
   \  },
   \}
 
-" For snippets
-let g:UltiSnipsExpandTrigger="<tab>"
+" For snippets let g:UltiSnipsExpandTrigger="<tab>"
 let g:UltiSnipsJumpForwardTrigger="<tab>"
 let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
 
