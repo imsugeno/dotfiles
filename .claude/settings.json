@@ -1,0 +1,19 @@
+{
+  "model": "claude-opus-4-1-20250805",
+  "includeCoAuthoredBy": true,
+  "permissions": {
+    "allow": [
+      "Bash(git status)",
+      "Bash(git diff)",
+      "Read(~/.bashrc)",
+      "Read(~/.zshrc)",
+      "Read(~/.gitconfig)"
+    ],
+    "deny": [
+      "Bash(rm *)"
+    ]
+  },
+  "env": {
+    "CLAUDE_CODE_DISABLE_TELEMETRY": "1"
+  }
+}
