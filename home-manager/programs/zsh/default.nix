@@ -16,7 +16,7 @@
     };
 
     # Initialize with .zshrc content
-    initExtra = builtins.readFile ./.zshrc;
+    initContent = builtins.readFile ./.zshrc;
   };
 
   # Copy zsh config files
