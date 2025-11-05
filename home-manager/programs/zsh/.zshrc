@@ -2,6 +2,8 @@
 source ~/.zsh/git-prompt.sh
 fpath=(~/.zsh $fpath)
 zstyle ':completion:*:*:git:*' script ~/.zsh/git-completion.bash
+
+# Kotlinc completion
 autoload -Uz compinit && compinit -u
 
 # ghq + peco function for quick directory navigation
