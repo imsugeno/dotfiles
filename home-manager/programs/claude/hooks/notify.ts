@@ -1,7 +1,4 @@
-#!/usr/bin/env node
-
-// Simple notification hook for Claude session events
-// This is a basic version - can be extended with actual notification logic
+#!/etc/profiles/per-user/elmo/bin/deno run --allow-run --allow-env
 
 interface HookData {
   session_id: string
@@ -10,40 +7,118 @@ interface HookData {
   stop_hook_active?: boolean
 }
 
-async function main() {
+const main = async () => {
+  const input = await new Response(Deno.stdin.readable).text()
+
   try {
-    // Read input from stdin
-    let input = ""
-    process.stdin.on('data', (chunk) => {
-      input += chunk.toString()
+    const data: HookData = JSON.parse(input)
+
+    const currentDir = Deno.cwd()
+
+    // Check if current directory is a git repository
+    const gitCheckProcess = new Deno.Command("git", {
+      args: ["rev-parse", "--is-inside-work-tree"],
+      stdout: "piped",
+      stderr: "piped",
     })
 
-    process.stdin.on('end', () => {
-      try {
-        const data: HookData = JSON.parse(input)
+    const gitCheckResult = await gitCheckProcess.output()
+    const isGitRepo =
+      gitCheckResult.success && new TextDecoder().decode(gitCheckResult.stdout).trim() === "true"
 
-        // Log the event
-        const timestamp = new Date().toISOString()
-        console.log(`[${timestamp}] Claude session ${data.hook_event_name} event`)
-        console.log(`Session ID: ${data.session_id}`)
-        console.log(`Transcript: ${data.transcript_path}`)
+    let repoInfo = ""
 
-        // You can add actual notification logic here
-        // For example:
-        // - Send desktop notification
-        // - Log to a file
-        // - Send webhook
-        // - etc.
+    if (isGitRepo) {
+      // Get repository name from git remote
+      const remoteProcess = new Deno.Command("git", {
+        args: ["remote", "get-url", "origin"],
+        stdout: "piped",
+        stderr: "piped",
+      })
 
-      } catch (error) {
-        console.error('Failed to parse hook data:', error)
+      const remoteResult = await remoteProcess.output()
+      const remoteUrl = new TextDecoder().decode(remoteResult.stdout).trim()
+
+      let repoName = ""
+      if (remoteUrl && remoteResult.success) {
+        // Extract repo name from URL (supports both HTTPS and SSH formats)
+        const match = remoteUrl.match(/[/:]([^/]+?)(?:\.git)?$/)
+        repoName = match ? match[1] : ""
       }
+
+      // Fallback to directory name if no git remote
+      if (!repoName) {
+        repoName = currentDir.split("/").pop() || ""
+      }
+
+      // Get current branch name
+      const branchProcess = new Deno.Command("git", {
+        args: ["branch", "--show-current"],
+        stdout: "piped",
+        stderr: "piped",
+      })
+
+      const branchResult = await branchProcess.output()
+      const branchName = new TextDecoder().decode(branchResult.stdout).trim()
+
+      repoInfo = branchName ? `${repoName} (${branchName})` : repoName
+    } else {
+      // Not a git repository, use directory name
+      repoInfo = currentDir.split("/").pop() || ""
+    }
+
+    const process: Deno.Command = (() => {
+      if (data.hook_event_name === "Stop") {
+        return new Deno.Command("osascript", {
+          args: [
+            "-e",
+            `display notification "Task Completed 🚀" with title "⚡ Claude Code" subtitle "${repoInfo} 📦"`,
+          ],
+          stdout: "piped",
+          stderr: "piped",
+        })
+      } else if (data.hook_event_name === "Notification") {
+        return new Deno.Command("osascript", {
+          args: [
+            "-e",
+            `display notification "Awaiting Confirmation 🔔" with title "⚡ Claude Code" subtitle "${repoInfo} 📦"`,
+          ],
+          stdout: "piped",
+          stderr: "piped",
+        })
+      } else {
+        throw new Error("unknown error")
+      }
+    })()
+
+    const result = await process.output()
+
+    // Debug: log the osascript execution result
+    console.error(`Debug: osascript exit code: ${result.code}`)
+    if (result.stdout.length > 0) {
+      console.error(`Debug: osascript stdout: ${new TextDecoder().decode(result.stdout)}`)
+    }
+    if (result.stderr.length > 0) {
+      console.error(`Debug: osascript stderr: ${new TextDecoder().decode(result.stderr)}`)
+    }
+
+    console.log(JSON.stringify({ success: true }))
+  } catch (error) {
+    console.log(
+      JSON.stringify({
+        success: false,
+        error: error instanceof Error ? error.message : String(error),
+      }),
+    )
+
+    const process = new Deno.Command("osascript", {
+      args: ["-e", 'display notification "Hook Failed !" with title "Claude Code Error 🚨"'],
+      stdout: "piped",
+      stderr: "piped",
     })
 
-  } catch (error) {
-    console.error('Hook error:', error)
-    process.exit(1)
+    await process.output()
   }
 }
 
-main()
+await main()

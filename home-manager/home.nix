@@ -12,8 +12,9 @@
 
   # Import program-specific configurations
   imports = [
-    ./programs/git
-    ./programs/claude
-    ./programs/zsh
+    ./programs/git/default.nix
+    ./programs/claude/default.nix
+    ./programs/zsh/default.nix
+    ./programs/deno/default.nix
   ];
 }
