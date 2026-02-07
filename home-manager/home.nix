@@ -14,6 +14,8 @@
   imports = [
     ./programs/git/default.nix
     ./programs/claude/default.nix
+    ./programs/cursor/default.nix
+    ./programs/mcp/default.nix
     ./programs/zsh/default.nix
     ./programs/deno/default.nix
   ];

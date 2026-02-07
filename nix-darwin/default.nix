@@ -29,6 +29,8 @@
       "gh"
       "ghq"
       "git"
+      "go-jsonnet"
+      "jq"
       "go"
       "kotlin"
       "mise"
