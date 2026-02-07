@@ -24,6 +24,8 @@
     darwinConfigurations."${hostname}" = nix-darwin.lib.darwinSystem {
       inherit system;
 
+      specialArgs = { inherit username; };
+
       modules = [
         ./nix-darwin/default.nix
 
