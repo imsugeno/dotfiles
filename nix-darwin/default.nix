@@ -15,12 +15,63 @@
   # The platform the configuration will be used on.
   nixpkgs.hostPlatform = "aarch64-darwin";
 
-  # Homebrew
+  # ─── macOS システム設定 ───
+
+  system.defaults = {
+    NSGlobalDomain = {
+      AppleShowAllExtensions = true;
+      AppleInterfaceStyle = "Dark";
+      # キーリピート（値が小さいほど速い）
+      InitialKeyRepeat = 15;
+      KeyRepeat = 2;
+    };
+
+    # NSGlobalDomain の型付きオプションに無い設定は CustomUserPreferences で管理
+    CustomUserPreferences = {
+      NSGlobalDomain = {
+        # カーソル移動速度
+        "com.apple.trackpad.scaling" = 2.5;
+        "com.apple.mouse.scaling" = 2;
+      };
+    };
+
+    finder = {
+      # リスト表示をデフォルトに
+      FXPreferredViewStyle = "Nlsv";
+    };
+
+    dock = {
+      autohide = true;
+      tilesize = 51;
+      orientation = "bottom";
+      mineffect = "genie";
+      show-recents = false;
+      persistent-apps = [
+        "/System/Applications/App Store.app"
+        "/System/Applications/Launchpad.app"
+        "/System/Applications/Reminders.app"
+        "/System/Applications/Notes.app"
+        "/System/Applications/System Settings.app"
+        "/Applications/iTerm.app"
+        "/Applications/Arc.app"
+        "/Applications/DMMbookviewer.app"
+      ];
+    };
+
+    WindowManager = {
+      # デスクトップクリックでウィンドウを退避しない
+      EnableStandardClickToShowDesktop = false;
+    };
+  };
+
+  # ─── Homebrew ───
+
   homebrew = {
     enable = true;
     onActivation = {
       # 宣言されていないパッケージを自動削除しない（既存のbrewパッケージを保護）
       cleanup = "none";
+      autoUpdate = true;
     };
     taps = [
       "homebrew/cask-fonts"
@@ -29,9 +80,10 @@
       "gh"
       "ghq"
       "git"
-      "go-jsonnet"
-      "jq"
       "go"
+      "go-jsonnet"
+      "graphviz"
+      "jq"
       "kotlin"
       "mise"
       "ni"
@@ -44,6 +96,7 @@
       "wget"
     ];
     casks = [
+      "1password"
       "arc"
       "bettertouchtool"
       "brave-browser"
@@ -57,11 +110,16 @@
       "google-chrome"
       "iterm2"
       "karabiner-elements"
+      "mac-mouse-fix"
+      "notion"
       "raycast"
       "scroll-reverser"
       "sequel-ace"
       "slack"
       "spotify"
     ];
+    masApps = {
+      "Kindle" = 302584613;
+    };
   };
 }
