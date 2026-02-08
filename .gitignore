@@ -4,6 +4,3 @@ home-manager/programs/mcp/secrets.jsonnet
 # MCP generated files
 home-manager/programs/mcp/.mcp-general.json
 home-manager/programs/mcp/.mcp-claude-code.json
-
-# Serena projects (user-specific paths)
-home-manager/programs/serena/projects.nix

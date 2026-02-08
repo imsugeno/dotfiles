@@ -2,11 +2,14 @@
   config,
   pkgs,
   lib,
+  homeDirectory,
   ...
 }:
 let
   yamlFormat = pkgs.formats.yaml { };
-  projects = import ./projects.nix;
+  # ~/.config/serena/projects.nix から読み込む（Git 管理外）
+  projectsFile = "${homeDirectory}/.config/serena/projects.nix";
+  projects = if builtins.pathExists projectsFile then import projectsFile else [];
   serenaConfig = {
     gui_log_window = false;
     web_dashboard = true;

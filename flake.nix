@@ -27,6 +27,7 @@
           userName = "imsugeno";
           userEmail = "g.tokyo.kazusa@gmail.com";
         };
+        # serenaProjects は default.nix で ~/.config/serena/projects.nix から読み込む
       };
       kazusa-sugeno = {
         username = "canly";
@@ -36,11 +37,12 @@
           userName = "imsugeno";
           userEmail = "g.tokyo.kazusa@gmail.com";
         };
+        # serenaProjects は default.nix で ~/.config/serena/projects.nix から読み込む
       };
     };
 
     # darwinConfiguration生成
-    mkDarwinConfig = name: { username, hostname, dotfilesPath, gitConfig }:
+    mkDarwinConfig = name: { username, hostname, dotfilesPath, gitConfig, ... }:
       let
         homeDirectory = "/Users/${username}";
       in
