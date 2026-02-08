@@ -8,7 +8,7 @@ macOS (aarch64-darwin) 向けの dotfiles リポジトリ。Nix Flakes + nix-dar
 
 ## 技術スタック
 
-- **Nix Flakes**: パッケージ管理・システム構成の基盤
+- **Nix Flakes**: パッケージ管理・システム構成の基盤（nixpkgs-25.05-darwin）
 - **nix-darwin**: macOS システム設定・Homebrew パッケージの宣言的管理
 - **home-manager**: ユーザーレベルの設定ファイル管理（symlink 方式）
 - **Jsonnet**: MCP サーバー設定の生成（secrets は .gitignore で除外）
@@ -17,25 +17,28 @@ macOS (aarch64-darwin) 向けの dotfiles リポジトリ。Nix Flakes + nix-dar
 ## ディレクトリ構成
 
 ```
-flake.nix                    # Flake 定義（inputs/outputs）
+flake.nix                    # Flake 定義（inputs/outputs、複数マシン対応）
 Makefile                     # make switch / make mcp / make update 等
+install.sh                   # 初回セットアップスクリプト
 nix-darwin/default.nix       # macOS システム設定 + Homebrew
 home-manager/
   home.nix                   # home-manager エントリポイント（imports）
   programs/
     claude/                  # Claude Code 設定・フック・コマンド
     cursor/                  # Cursor IDE 設定（settings.json, keybindings.json）
+    deno/                    # Deno 設定
+    git/                     # Git 設定
     karabiner/               # Karabiner-Elements 設定
     mcp/                     # MCP サーバー設定（jsonnet → JSON 生成）
-    git/                     # Git 設定
+    mise/                    # mise ランタイム管理（Python, Go 等）
+    serena/                  # Serena AI コーディングアシスタント設定
     zsh/                     # Zsh 設定
-    deno/                    # Deno 設定
 ```
 
 ## よく使うコマンド
 
 ```bash
-make switch    # nix-darwin 設定を適用（sudo 必要）
+make switch    # nix-darwin 設定を適用
 make mcp       # MCP 設定を jsonnet からビルド
 make update    # flake inputs を更新
 make rebuild   # update + mcp + switch
@@ -48,5 +51,6 @@ make check     # flake 設定を検証
 - **新しいプログラム設定を追加する場合**: `home-manager/programs/<name>/default.nix` を作成し、`home-manager/home.nix` の imports に追加する
 - **Homebrew パッケージ**: `nix-darwin/default.nix` の `homebrew.brews` / `homebrew.casks` にアルファベット順で追加する
 - **シークレット**: `secrets.jsonnet` は `.gitignore` で除外。`secrets.jsonnet.example` をテンプレートとして管理する
+- **Serena プロジェクト設定**: `~/.config/serena/projects.nix` は Git 管理外。`projects.nix.example` をテンプレートとして管理する
 - **新規ファイル追加時**: Nix Flakes は Git 追跡ファイルのみ参照するため、`git add` を忘れないこと
 - **Determinate Nix**: `nix.enable = false` を設定して競合を回避している

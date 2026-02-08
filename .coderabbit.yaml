@@ -27,6 +27,15 @@ reviews:
     - path: "**/*.json"
       instructions: |
         JSON 設定ファイルです。構文エラーがないか確認してください。
+    - path: "**/*.toml"
+      instructions: |
+        TOML 設定ファイルです（主に mise のランタイム管理設定）。
+        構文エラーがないか確認してください。
+    - path: "install.sh"
+      instructions: |
+        初回セットアップ用シェルスクリプトです。
+        - set -euo pipefail が設定されているか確認してください
+        - macOS (Apple Silicon) 専用のスクリプトです
   tools:
     shellcheck:
       enabled: true
