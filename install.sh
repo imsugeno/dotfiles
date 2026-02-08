@@ -46,7 +46,7 @@ fi
 
 if ! command -v nix &>/dev/null; then
   info "Determinate Nix をインストールしています..."
-  curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install
+  curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install --no-confirm
   # 現在のシェルで nix を有効化
   if [[ -f /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh ]]; then
     # shellcheck disable=SC1091
@@ -56,16 +56,31 @@ else
   info "Nix: OK"
 fi
 
+# ─── ホスト名の検出 ───
+
+HOSTNAME=$(scutil --get LocalHostName)
+info "検出されたホスト名: ${HOSTNAME}"
+
 # ─── リポジトリのクローン ───
 
-DOTFILES_DIR="$HOME/repos/github.com/imsugeno/dotfiles"
+# スクリプトの実行場所からリポジトリパスを推定
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-if [[ ! -d "${DOTFILES_DIR}" ]]; then
-  info "dotfiles をクローンしています..."
-  mkdir -p "$(dirname "${DOTFILES_DIR}")"
-  git clone https://github.com/imsugeno/dotfiles.git "${DOTFILES_DIR}"
+# 既に dotfiles ディレクトリ内で実行されている場合はそれを使用
+if [[ -f "${SCRIPT_DIR}/flake.nix" ]]; then
+  DOTFILES_DIR="${SCRIPT_DIR}"
+  info "既存の dotfiles ディレクトリを使用: ${DOTFILES_DIR}"
 else
-  info "dotfiles ディレクトリは既に存在します: ${DOTFILES_DIR}"
+  # デフォルトのクローン先（ユーザーのホームディレクトリ内）
+  DOTFILES_DIR="$HOME/repos/github.com/imsugeno/dotfiles"
+
+  if [[ ! -d "${DOTFILES_DIR}" ]]; then
+    info "dotfiles をクローンしています..."
+    mkdir -p "$(dirname "${DOTFILES_DIR}")"
+    git clone https://github.com/imsugeno/dotfiles.git "${DOTFILES_DIR}"
+  else
+    info "dotfiles ディレクトリは既に存在します: ${DOTFILES_DIR}"
+  fi
 fi
 
 cd "${DOTFILES_DIR}"
@@ -91,8 +106,26 @@ done
 
 # ─── nix-darwin の初回セットアップ ───
 
-info "nix-darwin を適用しています..."
-nix run nix-darwin -- switch --flake ".#imsugeno"
+info "nix-darwin を適用しています (ホスト名: ${HOSTNAME})..."
+
+# ホスト名が flake.nix の machines に定義されているか確認
+if nix flake show 2>&1 | grep -q "darwinConfigurations.${HOSTNAME}"; then
+  nix run nix-darwin -- switch --flake ".#${HOSTNAME}"
+else
+  error "ホスト名 '${HOSTNAME}' が flake.nix に定義されていません"
+  info "flake.nix の machines オブジェクトに以下を追加してください:"
+  echo ""
+  echo "  ${HOSTNAME} = {"
+  echo "    username = \"$(whoami)\";"
+  echo "    hostname = \"${HOSTNAME}\";"
+  echo "    dotfilesPath = \"${DOTFILES_DIR}\";"
+  echo "    gitConfig = {"
+  echo "      userName = \"your-git-username\";"
+  echo "      userEmail = \"your@email.com\";"
+  echo "    };"
+  echo "  };"
+  exit 1
+fi
 
 info ""
 info "セットアップが完了しました！"

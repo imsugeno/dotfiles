@@ -1,10 +1,10 @@
-{ config, pkgs, ... }:
+{ config, pkgs, gitConfig, ... }:
 
 {
   programs.git = {
     enable = true;
-    userName = "imsugeno";
-    userEmail = "g.tokyo.kazusa@gmail.com";
+    userName = gitConfig.userName;
+    userEmail = gitConfig.userEmail;
 
     extraConfig = {
       init.defaultBranch = "main";

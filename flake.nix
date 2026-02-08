@@ -15,32 +15,63 @@
 
   outputs = inputs@{ self, nix-darwin, nixpkgs, home-manager, ... }:
   let
-    username = "elmo";
-    homeDirectory = "/Users/${username}";
-    hostname = "imsugeno";
     system = "aarch64-darwin";
+
+    # マシン設定
+    machines = {
+      imsugeno = {
+        username = "elmo";
+        hostname = "imsugeno";
+        dotfilesPath = "/Users/elmo/repos/github.com/imsugeno/dotfiles";
+        gitConfig = {
+          userName = "imsugeno";
+          userEmail = "g.tokyo.kazusa@gmail.com";
+        };
+      };
+      kazusa-sugeno = {
+        username = "canly";
+        hostname = "kazusa-sugeno";
+        dotfilesPath = "/Users/canly/src/github.com/imsugeno/dotfiles";
+        gitConfig = {
+          userName = "imsugeno";
+          userEmail = "g.tokyo.kazusa@gmail.com";
+        };
+      };
+    };
+
+    # darwinConfiguration生成
+    mkDarwinConfig = name: { username, hostname, dotfilesPath, gitConfig }:
+      let
+        homeDirectory = "/Users/${username}";
+      in
+      nix-darwin.lib.darwinSystem {
+        inherit system;
+
+        # nix-darwin モジュールで利用可能
+        specialArgs = {
+          inherit username hostname;
+        };
+
+        modules = [
+          ./nix-darwin/default.nix
+
+          home-manager.darwinModules.home-manager
+          {
+            home-manager.useGlobalPkgs = true;
+            home-manager.useUserPackages = true;
+            home-manager.backupFileExtension = "backup";
+
+            # home-manager モジュールで利用可能
+            home-manager.extraSpecialArgs = {
+              inherit username homeDirectory dotfilesPath gitConfig;
+            };
+
+            home-manager.users."${username}" = import ./home-manager/home.nix;
+          }
+        ];
+      };
   in
   {
-    darwinConfigurations."${hostname}" = nix-darwin.lib.darwinSystem {
-      inherit system;
-
-      specialArgs = { inherit username; };
-
-      modules = [
-        ./nix-darwin/default.nix
-
-        home-manager.darwinModules.home-manager
-        {
-          home-manager.useGlobalPkgs = true;
-          home-manager.useUserPackages = true;
-          home-manager.backupFileExtension = "backup";
-          home-manager.users."${username}" = import ./home-manager/home.nix {
-            inherit (nixpkgs) config lib;
-            inherit username homeDirectory;
-            pkgs = import nixpkgs { inherit system; };
-          };
-        }
-      ];
-    };
+    darwinConfigurations = builtins.mapAttrs mkDarwinConfig machines;
   };
 }

@@ -69,14 +69,11 @@
   homebrew = {
     enable = true;
     onActivation = {
-      # 宣言されていないパッケージを自動削除しない（既存のbrewパッケージを保護）
-      cleanup = "none";
       autoUpdate = true;
     };
-    taps = [
-      "homebrew/cask-fonts"
-    ];
+    taps = [];
     brews = [
+      "curl"
       "gh"
       "ghq"
       "git"
@@ -90,7 +87,7 @@
       "peco"
       "qrencode"
       "starship"
-      "terraform"
+      "tfenv"
       "tmux"
       "tree"
       "wget"

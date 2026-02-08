@@ -1,4 +1,4 @@
-#!/etc/profiles/per-user/elmo/bin/deno run --allow-run --allow-env
+#!/usr/bin/env -S deno run --allow-run --allow-env
 
 interface HookData {
   session_id: string

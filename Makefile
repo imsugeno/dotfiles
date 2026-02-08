@@ -1,5 +1,8 @@
 .PHONY: help all switch update clean gc rebuild check mcp clean-mcp
 
+# ホスト名の自動検出
+HOSTNAME := $(shell scutil --get LocalHostName)
+
 # Default target: MCP設定をビルドしてからnix-darwinを適用
 all: mcp switch
 
@@ -24,7 +27,7 @@ help:
 
 # Apply configuration
 switch:
-	darwin-rebuild switch --flake ".#imsugeno"
+	darwin-rebuild switch --flake ".#$(HOSTNAME)"
 
 # Build MCP server configurations
 mcp: clean-mcp
