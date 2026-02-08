@@ -1,0 +1,40 @@
+# yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
+language: "ja-JP"
+early_access: false
+reviews:
+  profile: "chill"
+  request_changes_workflow: false
+  high_level_summary: true
+  poem: true
+  review_status: true
+  review_details: false
+  collapse_walkthrough: true
+  sequence_diagrams: true
+  auto_review:
+    enabled: true
+    drafts: false
+  path_instructions:
+    - path: "**/*.nix"
+      instructions: |
+        Nix言語のコードです。nix-darwin と home-manager の設定ファイルです。
+        - Homebrew の brews/casks がアルファベット順になっているか確認してください
+        - mkOutOfStoreSymlink のパスが正しいか確認してください
+        - 新規ファイルが git add されているか注意を促してください
+    - path: "**/*.jsonnet"
+      instructions: |
+        Jsonnet で MCP サーバー設定を生成しています。
+        - secrets.jsonnet がコミットに含まれていないか確認してください
+    - path: "**/*.json"
+      instructions: |
+        JSON 設定ファイルです。構文エラーがないか確認してください。
+  tools:
+    shellcheck:
+      enabled: true
+    yamllint:
+      enabled: true
+    gitleaks:
+      enabled: true
+    actionlint:
+      enabled: true
+chat:
+  auto_reply: true
