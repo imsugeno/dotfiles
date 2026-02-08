@@ -94,6 +94,15 @@ if [[ ! -f "${MCP_SECRETS}" ]]; then
   warn "MCP シークレットを編集してください: ${DOTFILES_DIR}/${MCP_SECRETS}"
 fi
 
+# ─── Serena プロジェクト設定 ───
+
+SERENA_PROJECTS="home-manager/programs/serena/projects.nix"
+if [[ ! -f "${SERENA_PROJECTS}" ]]; then
+  info "Serena プロジェクト設定のテンプレートをコピーしています..."
+  cp "${SERENA_PROJECTS}.example" "${SERENA_PROJECTS}"
+  warn "必要に応じて編集してください: ${DOTFILES_DIR}/${SERENA_PROJECTS}"
+fi
+
 # ─── MCP 設定の初期ダミーファイル ───
 
 MCP_DIR="home-manager/programs/mcp"

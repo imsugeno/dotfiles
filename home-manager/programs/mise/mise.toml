@@ -1,0 +1,5 @@
+[tools]
+go = "1.25.0"
+java = "23"
+kotlin = "2.2.21"
+python = "3.14"

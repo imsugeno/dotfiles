@@ -19,5 +19,7 @@
     ./programs/mcp/default.nix
     ./programs/zsh/default.nix
     ./programs/deno/default.nix
+    ./programs/serena/default.nix
+    ./programs/mise/default.nix
   ];
 }
