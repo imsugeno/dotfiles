@@ -65,7 +65,7 @@
 
             # home-manager モジュールで利用可能
             home-manager.extraSpecialArgs = {
-              inherit username homeDirectory dotfilesPath gitConfig;
+              inherit username homeDirectory dotfilesPath gitConfig hostname;
             };
 
             home-manager.users."${username}" = import ./home-manager/home.nix;
