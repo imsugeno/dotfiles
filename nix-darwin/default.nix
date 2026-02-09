@@ -48,13 +48,11 @@
       show-recents = false;
       persistent-apps = [
         "/System/Applications/App Store.app"
-        "/System/Applications/Launchpad.app"
         "/System/Applications/Reminders.app"
         "/System/Applications/Notes.app"
         "/System/Applications/System Settings.app"
         "/Applications/iTerm.app"
         "/Applications/Arc.app"
-        "/Applications/DMMbookviewer.app"
       ];
     };
 
