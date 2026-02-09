@@ -87,6 +87,7 @@
       "tmux"
       "tree"
       "wget"
+      "zsh-autosuggestions"
     ];
     casks = [
       "1password"

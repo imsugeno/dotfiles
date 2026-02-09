@@ -27,3 +27,6 @@ export CLAUDE_CONFIG_DIR="$HOME/.config/claude"
 
 # mise
 eval "$(mise activate zsh)"
+
+# zsh-autosuggestions
+source $(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh
