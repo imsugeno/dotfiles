@@ -80,7 +80,6 @@
       "go-jsonnet"
       "graphviz"
       "jq"
-      "kotlin"
       "mise"
       "ni"
       "peco"
