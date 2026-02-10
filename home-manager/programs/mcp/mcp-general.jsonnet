@@ -14,6 +14,15 @@ local secrets = import 'secrets.jsonnet';
         Authorization: 'Bearer ' + secrets.devin.apiKey,
       },
     },
+    'awslabs.aws-documentation-mcp-server': {
+      command: 'uvx',
+      args: ['awslabs.aws-documentation-mcp-server@latest'],
+      env: {
+        FASTMCP_LOG_LEVEL: 'ERROR',
+        AWS_DOCUMENTATION_PARTITION: 'aws',
+        MCP_USER_AGENT: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
+      },
+    },
     deepwiki: {
       url: 'https://mcp.deepwiki.com/mcp',
     },
