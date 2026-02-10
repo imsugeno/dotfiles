@@ -1,11 +1,18 @@
 // MCP servers for GUI tools (Cursor, etc.)
 local home = std.extVar('HOME');
+local secrets = import 'secrets.jsonnet';
 
 {
   mcpServers: {
     'playwright-mcp': {
       command: 'npx',
       args: ['@playwright/mcp@latest'],
+    },
+    devin: {
+      serverUrl: 'https://mcp.devin.ai/mcp',
+      headers: {
+        Authorization: 'Bearer ' + secrets.devin.apiKey,
+      },
     },
     deepwiki: {
       url: 'https://mcp.deepwiki.com/mcp',

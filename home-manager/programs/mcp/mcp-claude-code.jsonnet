@@ -1,8 +1,16 @@
 // MCP servers for Claude Code CLI
 local home = std.extVar('HOME');
+local secrets = import 'secrets.jsonnet';
 
 {
   mcpServers: {
+    devin: {
+      type: 'http',
+      url: 'https://mcp.devin.ai/mcp',
+      headers: {
+        Authorization: 'Bearer ' + secrets.devin.apiKey,
+      },
+    },
     deepwiki: {
       type: 'http',
       url: 'https://mcp.deepwiki.com/mcp',
