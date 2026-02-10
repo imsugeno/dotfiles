@@ -92,6 +92,7 @@
       "tree"
       "wget"
       "zsh-autosuggestions"
+      "mysql"
     ];
     casks = [
       "1password"
