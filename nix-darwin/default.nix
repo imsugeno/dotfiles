@@ -33,6 +33,10 @@
         "com.apple.trackpad.scaling" = 2.5;
         "com.apple.mouse.scaling" = 2;
       };
+      # パスワードとパスキーを自動入力をオフ
+      "com.apple.Passwords" = {
+        AutoFillPasswords = false;
+      };
     };
 
     finder = {
