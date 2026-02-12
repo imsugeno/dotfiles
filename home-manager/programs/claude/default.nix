@@ -21,6 +21,13 @@ let
           command = "${dotfilesPath}/home-manager/programs/claude/hooks/notify.ts";
         }];
       }];
+      PostToolUse = [{
+        matcher = "Edit|Write";
+        hooks = [{
+          type = "command";
+          command = "${dotfilesPath}/home-manager/programs/claude/hooks/go-fmt.sh";
+        }];
+      }];
     };
   };
 
