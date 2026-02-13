@@ -1,4 +1,4 @@
-{ config, lib, dotfilesPath, hostname, ... }:
+{ config, lib, dotfilesPath, ... }:
 
 let
   baseSettings = {
@@ -106,9 +106,7 @@ let
     };
   };
 
-  settings = if hostname == "kazusa-sugeno"
-    then lib.recursiveUpdate baseSettings bedrockSettings
-    else baseSettings;
+  settings = lib.recursiveUpdate baseSettings bedrockSettings;
 in
 {
   # Claude configuration management
