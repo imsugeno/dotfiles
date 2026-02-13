@@ -103,6 +103,7 @@
       "tree"
       "wget"
       "zsh-autosuggestions"
+      "awscli"
     ];
     casks = [
       "1password"
