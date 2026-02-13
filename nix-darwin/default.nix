@@ -66,6 +66,15 @@
     };
   };
 
+  # ─── Activation Scripts ───
+
+  system.activationScripts.postActivation.text = ''
+    # 未署名 cask の quarantine 属性を除去
+    if [ -d "/Applications/Arto.app" ]; then
+      xattr -dr com.apple.quarantine /Applications/Arto.app 2>/dev/null || true
+    fi
+  '';
+
   # ─── Homebrew ───
 
   homebrew = {
@@ -73,7 +82,9 @@
     onActivation = {
       autoUpdate = true;
     };
-    taps = [];
+    taps = [
+      "arto-app/tap"
+    ];
     brews = [
       "curl"
       "gh"
@@ -95,6 +106,7 @@
     ];
     casks = [
       "1password"
+      "arto-app/tap/arto"
       "arc"
       "bettertouchtool"
       "brave-browser"
