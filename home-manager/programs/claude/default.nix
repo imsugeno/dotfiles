@@ -3,8 +3,15 @@
 let
   baseSettings = {
     "$schema" = "https://json.schemastore.org/claude-code-settings.json";
+    language = "Japanese";
+    alwaysThinkingEnabled = true;
     env.DISABLE_AUTOUPDATER = "1";
     includeCoAuthoredBy = false;
+    enabledPlugins = {
+      "typescript-lsp@claude-plugins-official" = true;
+      "pyright-lsp@claude-plugins-official" = true;
+      "gopls-lsp@claude-plugins-official" = true;
+    };
     permissions = {
       defaultMode = "acceptEdits";
       allow = [
@@ -90,6 +97,14 @@ let
           command = "${dotfilesPath}/home-manager/programs/claude/hooks/go-fmt.sh";
         }];
       }];
+    };
+    statusLine = {
+      type = "command";
+      command = "${dotfilesPath}/home-manager/programs/claude/statusline/statusline.ts";
+    };
+    fileSuggestion = {
+      type = "command";
+      command = "${dotfilesPath}/home-manager/programs/claude/file-suggestion.sh";
     };
   };
 

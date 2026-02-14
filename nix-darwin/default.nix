@@ -88,6 +88,8 @@
     brews = [
       "curl"
       "eza"
+      "fd"
+      "fzf"
       "gh"
       "ghq"
       "git"
