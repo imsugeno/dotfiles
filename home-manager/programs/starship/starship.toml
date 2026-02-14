@@ -10,6 +10,7 @@ $git_status\
 $c\
 $deno\
 $golang\
+$kotlin\
 $nodejs\
 $php\
 $python\
@@ -128,6 +129,11 @@ format = '[ $symbol( $version) |]($style)'
 
 [golang]
 symbol = "󰟓"
+style = "fg:teal"
+format = '[ $symbol( $version) |]($style)'
+
+[kotlin]
+symbol = "󱈙"
 style = "fg:teal"
 format = '[ $symbol( $version) |]($style)'
 
