@@ -8,6 +8,8 @@ let
     permissions = {
       defaultMode = "acceptEdits";
       allow = [
+        # Read — 全ファイル読み取り許可（deny で機密ファイルを除外）
+        "Read"
         # Bash — 安全な開発コマンド
         "Bash(git *)"
         "Bash(make *)"
