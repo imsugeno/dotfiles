@@ -5,6 +5,7 @@ let
     "$schema" = "https://json.schemastore.org/claude-code-settings.json";
     language = "Japanese";
     alwaysThinkingEnabled = true;
+    autoCompact = false;
     env.DISABLE_AUTOUPDATER = "1";
     includeCoAuthoredBy = false;
     enabledPlugins = {
