@@ -24,10 +24,4 @@
     source = ./zsh-config;
     recursive = true;
   };
-
-  # Ensure starship is available
-  programs.starship = {
-    enable = true;
-    enableZshIntegration = true;
-  };
 }

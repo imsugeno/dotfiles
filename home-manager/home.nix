@@ -20,6 +20,7 @@
     ./programs/zsh/default.nix
     ./programs/deno/default.nix
     ./programs/serena/default.nix
+    ./programs/starship/default.nix
     ./programs/mise/default.nix
   ];
 }
