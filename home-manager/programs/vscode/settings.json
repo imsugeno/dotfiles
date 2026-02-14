@@ -103,5 +103,6 @@
     "claudeCode.preferredLocation": "panel",
     "claudeCode.allowDangerouslySkipPermissions": true,
     "claudeCode.initialPermissionMode": "acceptEdits",
-    "claudeCode.useCtrlEnterToSend": true
+    "claudeCode.useCtrlEnterToSend": true,
+    "workbench.secondarySideBar.defaultVisibility": "hidden"
 }
