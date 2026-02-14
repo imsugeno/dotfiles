@@ -1,0 +1,157 @@
+"$schema" = 'https://starship.rs/config-schema.json'
+
+format = """
+[ ](mauve)\
+$sudo\
+$time\
+$directory\
+$git_branch\
+$git_status\
+$c\
+$deno\
+$golang\
+$nodejs\
+$php\
+$python\
+$zig\
+$status\
+$cmd_duration\
+$line_break
+$character"""
+
+palette = 'catppuccin_mocha'
+
+[sudo]
+style = 'mauve'
+format = "[ ]($style)"
+disabled = false
+
+[time]
+disabled = false
+time_format = "%T"
+style = "lavender"
+format = '[ $time |]($style)'
+
+[directory]
+style = "blue"
+format = "[ 󰉋 $path |]($style)"
+truncation_length = 3
+truncation_symbol = "…/"
+
+[directory.substitutions]
+"Documents" = "󰈙 "
+"Downloads" = " "
+"Music" = "󰝚 "
+"Pictures" = " "
+
+[git_branch]
+symbol = ""
+style = "sapphire"
+format = '[ $symbol $branch ]($style)'
+
+[git_status]
+style = "sapphire"
+format = '[$conflicted$deleted$renamed$modified$staged$untracked$ahead_behind |]($style)'
+# conflicted =
+# untracked ?
+# stashed $
+# modified !
+# staged +
+# renamed »
+# deleted ✘
+# ahead ⇡
+# behind ⇣
+# diverged ⇕
+up_to_date = '✓'
+
+[status]
+style = "fg:green"
+format = '[$symbol]($style)'
+disabled = false
+success_symbol = "[ ✓ ]($style)"
+symbol = "[ ✖ $status $common_meaning](bold fg:red)"
+
+[line_break]
+disabled = true
+
+[cmd_duration]
+show_milliseconds = true
+format = "[ 󰾆 $duration ]($style)"
+style = "fg:rosewater"
+disabled = false
+show_notifications = true
+min_time_to_notify = 120000
+min_time = 700
+
+[character]
+disabled = false
+success_symbol = '[❯](bold fg:sapphire)'
+error_symbol = '[❯](bold fg:red)'
+
+[palettes.catppuccin_mocha]
+rosewater = "#f5e0dc"
+flamingo = "#f2cdcd"
+pink = "#f5c2e7"
+mauve = "#cba6f7"
+red = "#f38ba8"
+maroon = "#eba0ac"
+peach = "#fab387"
+yellow = "#f9e2af"
+green = "#a6e3a1"
+teal = "#94e2d5"
+sky = "#89dceb"
+sapphire = "#74c7ec"
+blue = "#89b4fa"
+lavender = "#b4befe"
+text = "#cdd6f4"
+subtext1 = "#bac2de"
+subtext0 = "#a6adc8"
+overlay2 = "#9399b2"
+overlay1 = "#7f849c"
+overlay0 = "#6c7086"
+surface2 = "#585b70"
+surface1 = "#45475a"
+surface0 = "#313244"
+base = "#1e1e2e"
+mantle = "#181825"
+crust = "#11111b"
+
+[c]
+symbol = " "
+style = "fg:teal"
+format = '[ $symbol( $version) |]($style)'
+
+[deno]
+symbol = "🦕"
+style = "fg:teal"
+format = '[ $symbol( $version) |]($style)'
+
+[golang]
+symbol = "󰟓"
+style = "fg:teal"
+format = '[ $symbol( $version) |]($style)'
+
+[nodejs]
+symbol = "󰎙"
+style = "fg:teal"
+format = '[ $symbol( $version) |]($style)'
+
+[php]
+symbol = "󰌟"
+style = "fg:teal"
+format = '[ $symbol( $version) |]($style)'
+
+[python]
+symbol = "󰌠"
+style = "fg:teal"
+format = '[ $symbol( $version) ( $virtualenv)|]($style)'
+
+[zig]
+symbol = "󰟓"
+style = "fg:teal"
+format = '[ $symbol( $version) |]($style)'
+
+[docker_context]
+symbol = "󰡨"
+style = "bg:teal"
+format = '[[ $symbol( $context) ](fg:crust bg:sapphire)]($style)'

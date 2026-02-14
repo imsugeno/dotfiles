@@ -90,6 +90,8 @@
         "editor.formatOnType": true
     },
     "editor.renderWhitespace": "none",
+    "editor.fontFamily": "Hack Nerd Font, Menlo, Monaco, 'Courier New', monospace",
+    "editor.fontLigatures": true,
     "terminal.integrated.fontFamily": "Hack Nerd Font",
     "terminal.integrated.env.osx": {},
     "console-ninja.featureSet": "Community",
