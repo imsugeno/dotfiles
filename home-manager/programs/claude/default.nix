@@ -52,16 +52,8 @@ let
         "mcp__serena"
       ];
       deny = [
-        # ネットワーク — curl/wget はブロック（WebFetch を使う）
-        "Bash(curl *)"
-        "Bash(wget *)"
-        # 破壊的操作
-        "Bash(rm *)"
-        "Bash(rmdir *)"
-        "Bash(mv *)"
         "Bash(sudo *)"
         "Bash(su *)"
-        # 機密ファイル
         "Read(.env)"
         "Read(.env.*)"
         "Read(~/.ssh/**)"
@@ -78,6 +70,13 @@ let
         }];
       }];
       Notification = [{
+        matcher = "";
+        hooks = [{
+          type = "command";
+          command = "${dotfilesPath}/home-manager/programs/claude/hooks/notify.ts";
+        }];
+      }];
+      PermissionRequest = [{
         matcher = "";
         hooks = [{
           type = "command";
@@ -123,6 +122,10 @@ in
 
   home.file.".config/claude/commands" = {
     source = config.lib.file.mkOutOfStoreSymlink "${dotfilesPath}/home-manager/programs/claude/commands";
+  };
+
+  home.file.".config/claude/skills" = {
+    source = config.lib.file.mkOutOfStoreSymlink "${dotfilesPath}/home-manager/programs/claude/skills";
   };
 
   home.file.".config/claude/hooks" = {
