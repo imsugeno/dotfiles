@@ -3,7 +3,7 @@
 interface HookData {
   session_id: string
   transcript_path: string
-  hook_event_name: "Stop" | "Notification"
+  hook_event_name: "Stop" | "Notification" | "PermissionRequest"
   stop_hook_active?: boolean
 }
 
@@ -82,6 +82,15 @@ const main = async () => {
           args: [
             "-e",
             `display notification "Awaiting Confirmation 🔔" with title "⚡ Claude Code" subtitle "${repoInfo} 📦"`,
+          ],
+          stdout: "piped",
+          stderr: "piped",
+        })
+      } else if (data.hook_event_name === "PermissionRequest") {
+        return new Deno.Command("osascript", {
+          args: [
+            "-e",
+            `display notification "Permission Required 🔐" with title "⚡ Claude Code" subtitle "${repoInfo} 📦"`,
           ],
           stdout: "piped",
           stderr: "piped",

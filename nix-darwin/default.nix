@@ -87,6 +87,7 @@
     ];
     brews = [
       "curl"
+      "eza"
       "gh"
       "ghq"
       "git"
@@ -103,6 +104,7 @@
       "tree"
       "wget"
       "zsh-autosuggestions"
+      "zsh-syntax-highlighting"
       "awscli"
       "gemini-cli"
     ];

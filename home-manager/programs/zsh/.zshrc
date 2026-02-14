@@ -22,6 +22,10 @@ bindkey '^]' peco-src
 PATH=~/.console-ninja/.bin:$PATH
 export PATH="/opt/homebrew/opt/openjdk/bin:$PATH"
 
+# Enable colors for ls
+export CLICOLOR=1
+export LSCOLORS=ExGxBxDxCxEgEdxbxgxcxd
+
 # Claude configuration
 export CLAUDE_CONFIG_DIR="$HOME/.config/claude"
 
@@ -30,3 +34,6 @@ eval "$(mise activate zsh)"
 
 # zsh-autosuggestions
 source $(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+
+# zsh-syntax-highlighting
+source $(brew --prefix)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh

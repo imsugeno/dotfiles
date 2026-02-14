@@ -15,6 +15,7 @@
     ./programs/git/default.nix
     ./programs/claude/default.nix
     ./programs/vscode/default.nix
+    ./programs/iterm/default.nix
     ./programs/karabiner/default.nix
     ./programs/mcp/default.nix
     ./programs/zsh/default.nix

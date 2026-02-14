@@ -9,10 +9,12 @@
 
     # Shell aliases
     shellAliases = {
-      ll = "ls -l";
-      la = "ls -a";
-      lla = "ls -la";
-      sl = "ls";
+      ls = "eza --icons --git";
+      ll = "eza --icons --git -l";
+      la = "eza --icons --git -a";
+      lla = "eza --icons --git -la";
+      lt = "eza --icons --git --tree";
+      sl = "eza --icons --git";
     };
 
     # Initialize with .zshrc content
