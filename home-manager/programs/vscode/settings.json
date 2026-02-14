@@ -99,10 +99,10 @@
     "workbench.sideBar.location": "right",
     "github.copilot.editor.enableAutoCompletions": true,
     "diffEditor.ignoreTrimWhitespace": false,
-    "workbench.colorTheme": "Darcula Theme from IntelliJ",
     "claudeCode.preferredLocation": "sidebar",
     "claudeCode.allowDangerouslySkipPermissions": true,
     "claudeCode.initialPermissionMode": "acceptEdits",
     "claudeCode.useCtrlEnterToSend": true,
-    "workbench.secondarySideBar.defaultVisibility": "hidden"
+    "workbench.secondarySideBar.defaultVisibility": "hidden",
+    "workbench.colorTheme": "Webstorm IntelliJ Darcula Theme"
 }
