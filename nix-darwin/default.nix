@@ -104,6 +104,7 @@
       "wget"
       "zsh-autosuggestions"
       "awscli"
+      "gemini-cli"
     ];
     casks = [
       "1password"
