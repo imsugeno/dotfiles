@@ -128,6 +128,7 @@
       "sequel-ace"
       "slack"
       "spotify"
+      "visual-studio-code"
     ];
     masApps = {
       "Kindle" = 302584613;
