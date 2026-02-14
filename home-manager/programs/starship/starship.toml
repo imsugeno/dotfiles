@@ -41,12 +41,11 @@ truncation_symbol = "…/"
 
 [directory.substitutions]
 "Documents" = "󰈙 "
-"Downloads" = " "
+"Downloads" = "󰇚 "
 "Music" = "󰝚 "
-"Pictures" = " "
+"Pictures" = "󰋩 "
 
 [git_branch]
-symbol = ""
 style = "sapphire"
 format = '[ $symbol $branch ]($style)'
 
@@ -116,11 +115,6 @@ surface0 = "#313244"
 base = "#1e1e2e"
 mantle = "#181825"
 crust = "#11111b"
-
-[c]
-symbol = " "
-style = "fg:teal"
-format = '[ $symbol( $version) |]($style)'
 
 [deno]
 symbol = "🦕"

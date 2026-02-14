@@ -100,7 +100,7 @@
     "github.copilot.editor.enableAutoCompletions": true,
     "diffEditor.ignoreTrimWhitespace": false,
     "workbench.colorTheme": "Darcula Theme from IntelliJ",
-    "claudeCode.preferredLocation": "panel",
+    "claudeCode.preferredLocation": "sidebar",
     "claudeCode.allowDangerouslySkipPermissions": true,
     "claudeCode.initialPermissionMode": "acceptEdits",
     "claudeCode.useCtrlEnterToSend": true,
