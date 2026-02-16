@@ -57,6 +57,7 @@
         "/System/Applications/System Settings.app"
         "/Applications/iTerm.app"
         "/Applications/Arc.app"
+        "/Applications/Claude.app"
       ];
     };
 
@@ -121,6 +122,7 @@
       "bettertouchtool"
       "brave-browser"
       "chromedriver"
+      "claude"
       "claude-code"
       "discord"
       "docker-desktop"
