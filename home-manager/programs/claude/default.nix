@@ -77,13 +77,6 @@ let
           command = "${dotfilesPath}/home-manager/programs/claude/hooks/notify.ts";
         }];
       }];
-      Notification = [{
-        matcher = "";
-        hooks = [{
-          type = "command";
-          command = "${dotfilesPath}/home-manager/programs/claude/hooks/notify.ts";
-        }];
-      }];
       PermissionRequest = [{
         matcher = "";
         hooks = [{
