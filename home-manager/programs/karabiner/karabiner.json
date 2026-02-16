@@ -41,6 +41,38 @@
                     }
                 }
             ],
+            "complex_modifications": {
+                "rules": [
+                    {
+                        "description": "Shift+Enter → \\ + Enter (iTerm2, Cursor)",
+                        "manipulators": [
+                            {
+                                "type": "basic",
+                                "from": {
+                                    "key_code": "return_or_enter",
+                                    "modifiers": {
+                                        "mandatory": ["shift"]
+                                    }
+                                },
+                                "to": [
+                                    { "key_code": "backslash" },
+                                    { "key_code": "return_or_enter" }
+                                ],
+                                "conditions": [
+                                    {
+                                        "type": "frontmost_application_if",
+                                        "bundle_identifiers": [
+                                            "^com\\.googlecode\\.iterm2$",
+                                            "^com\\.todesktop\\.230313mzl4w4u92$",
+                                            "^com\\.microsoft\\.VSCode$"
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            },
             "name": "Default profile",
             "selected": true,
             "virtual_hid_keyboard": { "keyboard_type_v2": "ansi" }

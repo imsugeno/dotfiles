@@ -16,8 +16,11 @@ let
     permissions = {
       defaultMode = "acceptEdits";
       allow = [
-        # Read — 全ファイル読み取り許可（deny で機密ファイルを除外）
+        # 読み取り・検索 — 全ファイル許可（deny で機密ファイルを除外）
         "Read"
+        "Glob"
+        "Grep"
+        "WebSearch"
         # Bash — 安全な開発コマンド
         "Bash(git *)"
         "Bash(make *)"
