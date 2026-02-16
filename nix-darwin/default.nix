@@ -66,6 +66,10 @@
     };
   };
 
+  # ─── sudo Touch ID ───
+
+  security.pam.services.sudo_local.touchIdAuth = true;
+
   # ─── Activation Scripts ───
 
   system.activationScripts.postActivation.text = ''
