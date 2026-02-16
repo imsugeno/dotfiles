@@ -1,8 +1,5 @@
-{ config, pkgs, lib, ... }:
+{ config, dotfilesPath, ... }:
 
-let
-  dotfilesPath = "${config.home.homeDirectory}/repos/github.com/imsugeno/dotfiles";
-in
 {
   programs.starship = {
     enable = true;

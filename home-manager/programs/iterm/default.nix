@@ -1,8 +1,5 @@
-{ config, pkgs, lib, ... }:
+{ config, dotfilesPath, ... }:
 
-let
-  dotfilesPath = "${config.home.homeDirectory}/repos/github.com/imsugeno/dotfiles";
-in
 {
   # iTerm2 Dynamic Profile
   # https://iterm2.com/documentation-dynamic-profiles.html

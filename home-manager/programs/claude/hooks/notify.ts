@@ -72,7 +72,7 @@ const main = async () => {
         return new Deno.Command("osascript", {
           args: [
             "-e",
-            `display notification "Task Completed 🚀" with title "⚡ Claude Code" subtitle "${repoInfo} 📦"`,
+            `display notification "Task Completed 🚀" with title "⚡ Claude Code" subtitle "${repoInfo} 📦" sound name "Glass"`,
           ],
           stdout: "piped",
           stderr: "piped",
@@ -81,7 +81,7 @@ const main = async () => {
         return new Deno.Command("osascript", {
           args: [
             "-e",
-            `display notification "Awaiting Confirmation 🔔" with title "⚡ Claude Code" subtitle "${repoInfo} 📦"`,
+            `display notification "Awaiting Confirmation 🔔" with title "⚡ Claude Code" subtitle "${repoInfo} 📦" sound name "Glass"`,
           ],
           stdout: "piped",
           stderr: "piped",
@@ -90,7 +90,7 @@ const main = async () => {
         return new Deno.Command("osascript", {
           args: [
             "-e",
-            `display notification "Permission Required 🔐" with title "⚡ Claude Code" subtitle "${repoInfo} 📦"`,
+            `display notification "Permission Required 🔐" with title "⚡ Claude Code" subtitle "${repoInfo} 📦" sound name "Glass"`,
           ],
           stdout: "piped",
           stderr: "piped",
@@ -121,7 +121,7 @@ const main = async () => {
     )
 
     const process = new Deno.Command("osascript", {
-      args: ["-e", 'display notification "Hook Failed !" with title "Claude Code Error 🚨"'],
+      args: ["-e", 'display notification "Hook Failed !" with title "Claude Code Error 🚨" sound name "Glass"'],
       stdout: "piped",
       stderr: "piped",
     })
