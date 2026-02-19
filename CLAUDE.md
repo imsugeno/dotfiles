@@ -35,7 +35,7 @@ home-manager/
     zsh/                     # Zsh 設定
 ```
 
-## よく使うコマンド
+## 人間がよく使うコマンド
 
 ```bash
 make switch    # nix-darwin 設定を適用
@@ -44,6 +44,9 @@ make update    # flake inputs を更新
 make rebuild   # update + mcp + switch
 make check     # flake 設定を検証
 ```
+
+## Claude Codeが使うコマンド
+nix関係のコマンドはLint等で使うに留め、ファイル操作等、ユーザーから受けた指示を実行する際の作業で必要なコマンドはDenoやPythonを利用する。」
 
 ## 開発ルール
 

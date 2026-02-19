@@ -14,7 +14,7 @@ let
       "gopls-lsp@claude-plugins-official" = true;
     };
     permissions = {
-      defaultMode = "acceptEdits";
+      defaultMode = "bypassPermissions";
       allow = [
         # 読み取り・検索 — 全ファイル許可（deny で機密ファイルを除外）
         "Read"
