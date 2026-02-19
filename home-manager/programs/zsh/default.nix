@@ -15,6 +15,7 @@
       lla = "eza --icons --git -la";
       lt = "eza --icons --git --tree";
       sl = "eza --icons --git";
+      gpp = "git pull origin main && git push origin HEAD";
     };
 
     # Initialize with .zshrc content
