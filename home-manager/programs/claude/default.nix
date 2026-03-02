@@ -6,6 +6,7 @@ let
     language = "Japanese";
     alwaysThinkingEnabled = true;
     autoCompact = false;
+    autoMemoryEnabled = false;
     env.DISABLE_AUTOUPDATER = "1";
     includeCoAuthoredBy = false;
     enabledPlugins = {
