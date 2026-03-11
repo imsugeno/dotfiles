@@ -104,5 +104,10 @@
     "claudeCode.initialPermissionMode": "acceptEdits",
     "claudeCode.useCtrlEnterToSend": true,
     "workbench.secondarySideBar.defaultVisibility": "hidden",
-    "workbench.colorTheme": "Webstorm IntelliJ Darcula Theme"
+    "workbench.colorTheme": "Webstorm IntelliJ Darcula Theme",
+    "accessibility.signals.terminalCommandSucceeded": { "sound": "off" },
+    "accessibility.signals.terminalCommandFailed": {
+        "sound": "off"
+    },
+    "editor.accessibilitySupport": "off"
 }

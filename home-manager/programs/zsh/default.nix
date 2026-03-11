@@ -15,7 +15,9 @@
       lla = "eza --icons --git -la";
       lt = "eza --icons --git --tree";
       sl = "eza --icons --git";
+      cafe = "caffeinate -dimsu";
       gpp = "git pull origin main && git push origin HEAD";
+      restart = "exec $SHELL -l";
     };
 
     # Initialize with .zshrc content
