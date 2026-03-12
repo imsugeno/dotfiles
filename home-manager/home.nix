@@ -22,6 +22,7 @@
     ./programs/deno/default.nix
     ./programs/serena/default.nix
     ./programs/starship/default.nix
+    ./programs/go/default.nix
     ./programs/mise/default.nix
   ];
 }
