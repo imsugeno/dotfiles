@@ -12,4 +12,7 @@
   home.file.".default-go-packages" = {
     source = config.lib.file.mkOutOfStoreSymlink "${dotfilesPath}/home-manager/programs/mise/.default-go-packages";
   };
+  home.file.".default-npm-packages" = {
+    source = config.lib.file.mkOutOfStoreSymlink "${dotfilesPath}/home-manager/programs/mise/.default-npm-packages";
+  };
 }

@@ -2,7 +2,7 @@
   "Profiles": [
     {
       "Name": "Default",
-      "Guid": "default-profile",
+      "Guid": "7812AA97-7135-40E5-BC7E-4B6741C2F02B",
       "Dynamic Profile Parent Name": "Default",
 
       "Font": "HackNerdFontMono-Regular 13",
