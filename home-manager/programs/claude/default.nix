@@ -8,7 +8,6 @@ let
     autoCompact = false;
     autoMemoryEnabled = false;
     effortLevel = "high";
-    env.DISABLE_AUTOUPDATER = "1";
     env.CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS = "1";
     includeCoAuthoredBy = false;
     enabledPlugins = {
