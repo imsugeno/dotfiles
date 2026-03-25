@@ -18,6 +18,9 @@
       cafe = "caffeinate -dimsu";
       gpp = "git pull origin main && git push origin HEAD";
       restart = "exec $SHELL -l";
+      cc = "claude --effort max";
+      ccr = "claude --effort max --resume";
+      ccp = "claude --effort max -p";
     };
 
     # Initialize with .zshrc content
