@@ -74,9 +74,9 @@
   # ─── Activation Scripts ───
 
   system.activationScripts.postActivation.text = ''
-    # 未署名 cask の quarantine 属性を除去
+    # 未署名 cask の quarantine / provenance 属性を除去
     if [ -d "/Applications/Arto.app" ]; then
-      xattr -dr com.apple.quarantine /Applications/Arto.app 2>/dev/null || true
+      xattr -cr /Applications/Arto.app 2>/dev/null || true
     fi
   '';
 
