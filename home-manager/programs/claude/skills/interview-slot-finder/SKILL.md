@@ -1,6 +1,8 @@
 ---
 name: interview-slot-finder
 description: Googleカレンダーから面談・ミーティングの候補日程を自動抽出するスキル。「面談の候補日を出して」「空いてる日程を共有したい」「MTGの候補を出して」「日程調整したい」「スケジュールの空きを見て」など、カレンダーの空き時間から候補枠を提案する場面で使う。曜日・時間帯・バッファ・枠数などの条件を考慮して、コピペしやすいフォーマットで出力する。Google Calendar MCP が接続されている前提。
+model: opusplan
+effort: max
 ---
 
 # Interview Slot Finder

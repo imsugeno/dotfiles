@@ -1,6 +1,8 @@
 ---
 name: git-commit
 description: 変更を分析して適切なprefixを付けたコミットメッセージを作成
+model: opusplan
+effort: max
 arguments: false
 ---
 

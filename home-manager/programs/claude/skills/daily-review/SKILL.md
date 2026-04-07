@@ -1,6 +1,8 @@
 ---
 name: daily-review
 description: デイリー振り返りドキュメントを作成
+model: opusplan
+effort: max
 arguments: true
 ---
 

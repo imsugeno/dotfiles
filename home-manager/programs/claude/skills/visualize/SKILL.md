@@ -1,6 +1,8 @@
 ---
 name: visualize
 description: ドキュメントを分析し、認知負荷を最小化しながら概念理解を助ける図を生成
+model: opusplan
+effort: max
 arguments: true
 ---
 

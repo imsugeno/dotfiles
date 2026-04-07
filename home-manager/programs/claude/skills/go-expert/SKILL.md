@@ -1,6 +1,8 @@
 ---
 name: go-expert
 description: Goのエキスパートになんでも質問
+model: opusplan
+effort: max
 arguments: true
 ---
 

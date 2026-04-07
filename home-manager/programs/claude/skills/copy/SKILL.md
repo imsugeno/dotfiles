@@ -1,6 +1,7 @@
 ---
 name: copy
 description: 出力やテキストをクリップボードにコピー
+model: haiku
 arguments: true
 ---
 

@@ -1,6 +1,8 @@
 ---
 name: x-timeline
 description: Xのタイムラインから直近24時間の技術系人気ポストを抽出してTop 10をリストアップ
+model: opusplan
+effort: max
 arguments: true
 ---
 

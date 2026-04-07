@@ -1,6 +1,8 @@
 ---
 name: gemini-search
 description: Gemini CLIを使用してウェブ検索を実行
+model: opusplan
+effort: max
 arguments: true
 ---
 

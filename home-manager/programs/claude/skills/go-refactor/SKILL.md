@@ -1,6 +1,8 @@
 ---
 name: go-refactor
 description: Goのエキスパートにリファクタリングを依頼
+model: opusplan
+effort: max
 arguments: true
 ---
 

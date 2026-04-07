@@ -1,6 +1,8 @@
 ---
 name: ddd-architect
 description: 松岡(@little_hand_s)流DDDに基づく実践的アーキテクチャ相談
+model: opusplan
+effort: max
 arguments: true
 ---
 
