@@ -86,6 +86,7 @@
     enable = true;
     onActivation = {
       autoUpdate = true;
+      upgrade = true;
     };
     taps = [
       "arto-app/tap"
