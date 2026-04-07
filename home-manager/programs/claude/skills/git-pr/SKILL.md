@@ -1,8 +1,7 @@
 ---
 name: git-pr
 description: feature ブランチの作成からPR作成までを一貫して実行
-model: opusplan
-effort: max
+model: sonnet
 arguments: true
 ---
 

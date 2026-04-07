@@ -1,8 +1,7 @@
 ---
 name: git-feature
 description: 現在の変更を退避し、デフォルトブランチを最新化してから新しいfeatureブランチを作成
-model: opusplan
-effort: max
+model: sonnet
 arguments: true
 ---
 

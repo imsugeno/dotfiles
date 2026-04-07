@@ -1,8 +1,7 @@
 ---
 name: git-commit-push
 description: 変更をコミットしてリモートにpush
-model: opusplan
-effort: max
+model: sonnet
 arguments: false
 ---
 
