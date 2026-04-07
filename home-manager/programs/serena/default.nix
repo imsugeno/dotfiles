@@ -3,13 +3,19 @@
   pkgs,
   lib,
   homeDirectory,
+  ghqRoot,
   ...
 }:
 let
   yamlFormat = pkgs.formats.yaml { };
   # ~/.config/serena/projects.nix から読み込む（Git 管理外）
   projectsFile = "${homeDirectory}/.config/serena/projects.nix";
-  projects = if builtins.pathExists projectsFile then import projectsFile else [];
+  allProjects = if builtins.pathExists projectsFile then import projectsFile else [];
+  # Serena を無効化するプロジェクトのパス（ghqRoot 配下の相対パスで指定）
+  excludedProjects = map (p: "${ghqRoot}/${p}") [
+    "github.com/imsugeno/dotfiles"
+  ];
+  projects = builtins.filter (p: !builtins.elem p excludedProjects) allProjects;
   serenaConfig = {
     gui_log_window = false;
     web_dashboard = true;

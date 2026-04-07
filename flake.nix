@@ -22,6 +22,7 @@
       imsugeno = {
         username = "elmo";
         hostname = "imsugeno";
+        ghqRoot = "/Users/elmo/repos";
         dotfilesPath = "/Users/elmo/repos/github.com/imsugeno/dotfiles";
         gitConfig = {
           userName = "imsugeno";
@@ -32,6 +33,7 @@
       kazusa-sugeno = {
         username = "canly";
         hostname = "kazusa-sugeno";
+        ghqRoot = "/Users/canly/src";
         dotfilesPath = "/Users/canly/src/github.com/imsugeno/dotfiles";
         gitConfig = {
           userName = "imsugeno";
@@ -42,7 +44,7 @@
     };
 
     # darwinConfiguration生成
-    mkDarwinConfig = name: { username, hostname, dotfilesPath, gitConfig, ... }:
+    mkDarwinConfig = name: { username, hostname, ghqRoot, dotfilesPath, gitConfig, ... }:
       let
         homeDirectory = "/Users/${username}";
       in
@@ -65,7 +67,7 @@
 
             # home-manager モジュールで利用可能
             home-manager.extraSpecialArgs = {
-              inherit username homeDirectory dotfilesPath gitConfig hostname;
+              inherit username homeDirectory ghqRoot dotfilesPath gitConfig hostname;
             };
 
             home-manager.users."${username}" = import ./home-manager/home.nix;
