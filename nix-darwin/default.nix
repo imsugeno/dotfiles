@@ -119,6 +119,7 @@
     casks = [
       "1password"
       "arto-app/tap/arto"
+      "aqua-voice"
       "arc"
       "bettertouchtool"
       "brave-browser"
