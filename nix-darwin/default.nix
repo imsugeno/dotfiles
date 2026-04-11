@@ -99,6 +99,7 @@
       "gh"
       "ghq"
       "git"
+      "go"
       "go-jsonnet"
       "graphviz"
       "jq"

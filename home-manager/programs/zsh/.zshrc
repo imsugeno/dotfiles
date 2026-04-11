@@ -19,6 +19,7 @@ zle -N peco-src
 bindkey '^]' peco-src
 
 # Additional PATH configurations
+export PATH="/opt/homebrew/bin:$PATH"
 PATH=~/.console-ninja/.bin:$PATH
 export PATH="$HOME/.local/bin:$PATH"
 export PATH="/opt/homebrew/opt/openjdk/bin:$PATH"

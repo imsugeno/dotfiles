@@ -1,5 +1,4 @@
 [tools]
-go = "1.26.1"
 java = "23"
 kotlin = "2.2.21"
 node = "22"
