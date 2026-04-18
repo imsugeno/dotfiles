@@ -9,7 +9,11 @@ let
     autoMemoryEnabled = false;
     effortLevel = "high";
     env.CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS = "1";
-    includeCoAuthoredBy = false;
+    # `includeCoAuthoredBy` は deprecated。attribution 設定で commit / pr 双方の帰属表示を空文字列化して抑止する。
+    attribution = {
+      commit = "";
+      pr = "";
+    };
     enabledPlugins = {
       "typescript-lsp@claude-plugins-official" = true;
       "pyright-lsp@claude-plugins-official" = true;
