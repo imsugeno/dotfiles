@@ -5,7 +5,6 @@ let
     "$schema" = "https://json.schemastore.org/claude-code-settings.json";
     language = "Japanese";
     alwaysThinkingEnabled = true;
-    autoCompact = false;
     autoMemoryEnabled = false;
     effortLevel = "high";
     env.CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS = "1";
