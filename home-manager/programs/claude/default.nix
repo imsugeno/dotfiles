@@ -4,10 +4,13 @@ let
   baseSettings = {
     "$schema" = "https://json.schemastore.org/claude-code-settings.json";
     language = "Japanese";
-    autoCompact = false;
     autoMemoryEnabled = false;
     effortLevel = "xhigh";
-    includeCoAuthoredBy = false;
+    # `includeCoAuthoredBy` は deprecated。attribution 設定で commit / pr 双方の帰属表示を空文字列化して抑止する。
+    attribution = {
+      commit = "";
+      pr = "";
+    };
     enabledPlugins = {
       "typescript-lsp@claude-plugins-official" = true;
       "pyright-lsp@claude-plugins-official" = true;
