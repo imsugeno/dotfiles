@@ -27,7 +27,7 @@ help:
 
 # Apply configuration
 switch:
-	darwin-rebuild switch --flake ".#$(HOSTNAME)"
+	sudo darwin-rebuild switch --flake ".#$(HOSTNAME)"
 
 # Build MCP server configurations
 mcp: clean-mcp

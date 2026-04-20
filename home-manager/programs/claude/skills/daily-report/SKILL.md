@@ -19,28 +19,62 @@ $ARGUMENTS
 
 ### Step 1: セッションログ収集
 
-```bash
-# 対象日のマーカーを作成（引数の日付 or 本日）
-touch -t ${TARGET_DATE}0000 /tmp/dailyreport_marker
+**格納場所**: CLI 版 / VSCode 拡張 / Cursor 拡張いずれも以下の2箇所に保存される。両方を対象にする。
+- `~/.claude/projects/`
+- `~/.config/claude/projects/`
 
-# 全プロジェクトのセッションファイルを取得（サブエージェント除外）
-# CLI版は ~/.claude/projects/、VSCode拡張版は ~/.config/claude/projects/ に格納
-find ~/.claude/projects ~/.config/claude/projects -maxdepth 4 -name "*.jsonl" \
-  -newer /tmp/dailyreport_marker ! -path "*/subagents/*" 2>/dev/null
+**重要な注意点**:
+- **maxdepth を制限しない**: worktree 配下のセッションは深い階層に格納される（例: `-Users-canly-src-.../leretto-inc-canly-public-api-nexus-worktrees-feature-CPA-115/xxx.jsonl`）。`-maxdepth 4` のような制限を付けると取りこぼす。
+- **ファイル mtime ではなく JSONL 内の `timestamp` でフィルタする**: `find -newer` はファイル修正時刻ベースなので、同じセッションファイルが複数日にまたがる場合や、別日の daily-report 自身によって touch された場合に誤判定する。JSONL の各レコードが持つ `timestamp` フィールド（ISO8601 UTC）が対象日で始まる行を1件でも含むファイルのみを対象にする。
+- **サブエージェントを除外**: `/subagents/` パスを含むファイルは親セッションの一部なので重複カウントしない。
+
+```bash
+# 対象日 (YYYY-MM-DD、JST ローカル日付) を TARGET_DATE に設定
+TARGET_DATE=${ARG:-$(date +%Y-%m-%d)}
+
+python3 - "$TARGET_DATE" <<'PY'
+import glob, json, sys
+target = sys.argv[1]
+paths = (glob.glob('/Users/canly/.claude/projects/**/*.jsonl', recursive=True)
+         + glob.glob('/Users/canly/.config/claude/projects/**/*.jsonl', recursive=True))
+paths = [p for p in paths if '/subagents/' not in p]
+for p in paths:
+    try:
+        with open(p) as f:
+            for line in f:
+                try:
+                    d = json.loads(line)
+                    # timestamp は UTC。JST日報の場合は target 前日 15:00Z〜当日 14:59Z も含めたいなら調整
+                    if d.get('timestamp', '').startswith(target):
+                        print(p); break
+                except Exception:
+                    pass
+    except Exception:
+        pass
+PY
 ```
 
-各セッションファイルから `"type":"user"` のメッセージを抽出し、以下を特定する:
-- プロジェクト名（パスから推定）
-- 作業内容（ユーザーの指示内容から要約）
-- 時間帯（タイムスタンプ）
+**JST / UTC の取り扱い**: `timestamp` は UTC。JST の「今日」は UTC では前日 15:00〜当日 14:59 に該当する。厳密に JST ローカル日付で集計したい場合は、対象範囲を `${TARGET_DATE-1}T15:00:00Z` ~ `${TARGET_DATE}T14:59:59Z` に広げて再判定する。ゆるく UTC 日付で集計するだけでよければ上記のままで十分（今日のセッションが UTC 深夜に開始し翌日にまたがる場合のみ影響）。
+
+各セッションファイルから `role == "user"` のメッセージと `role == "assistant"` のテキストを抽出し、以下を特定する:
+- プロジェクト名（パスの `-Users-canly-src-github-com-<org>-<repo>` 部分から推定、worktree 配下なら `-worktrees-<branch>` も含める）
+- 作業内容（ユーザー指示のうちスキル定義・`<scheduled-task>` 等の自動生成メッセージを除外した実入力）
+- 時間帯（`timestamp` の最初と最後）
+- セッション件数（日報の規模感把握用）
 
 ### Step 2: gitログ補完
 
 セッションに対応するリポジトリで対象日のコミットを取得:
 
 ```bash
-git -C <repo_path> log --format="%h %s" --since="${TARGET_DATE}T00:00:00" --all
+git -C <repo_path> log --all --format="%h %ai %s | %an" \
+  --since="${TARGET_DATE}T00:00:00" --until="${TARGET_DATE}T23:59:59"
 ```
+
+**注意点**:
+- **worktree 配下も個別に走査する**: `canly-public-api-nexus.worktrees/feature/CPA-xxx/` などの別ブランチで作業した内容は親リポジトリの log には出ないことがある。`ls <repo>.worktrees/*/` と `ls <repo>.worktrees/*/*/` を再帰的に見て、`.git` (ファイル) を持つディレクトリを拾う。
+- **著者フィルタは使わない**: `claude/xxx` ブランチの Claude リモートエージェントによるコミット（Author: `Claude <noreply@anthropic.com>`）は自分の作業成果として扱いたいので、`--author` で絞らずに後段で判断する。
+- **未コミット変更も拾う**: `git status` と `git diff --stat` で作業中の変更を把握し、「明日以降やること」に反映する。
 
 ### Step 3: セクション1「履歴」生成
 
@@ -87,8 +121,15 @@ git -C <repo_path> log --format="%h %s" --since="${TARGET_DATE}T00:00:00" --all
 ### Step 6: ファイル出力
 
 - パス: `~/Work/dailyreport/YYYY-MM-DD.md`
-- 既存ファイルがある場合は上書き確認
+- 既存ファイルがある場合は上書き確認（scheduled-task 実行時はユーザー不在のため上書き）
 - 保存後、内容をユーザーに表示
+
+### Step 7: セルフチェック
+
+出力前に以下を確認する:
+- **セッション件数の妥当性確認**: 対象日のセッションファイルが「1件のみ（= daily-report 自身）」の場合、他の場所にセッションファイルがないか再確認する（maxdepth・パス指定のミスが典型原因）。平日で 1 件のみは不自然。
+- **git log との突き合わせ**: セッションログに現れないコミット（リモート Claude エージェント作の `claude/xxx` ブランチ等）がある場合、日報本文で「リモート作業」として区別するか、その日のローカル作業量を正しく評価する。
+- **worktree 漏れチェック**: 同一リポジトリに複数 worktree が存在する場合、各 worktree の `git status` / `git log` を確認する。メインリポジトリだけ見ると feature ブランチの作業を丸ごと見落とす。
 
 ## 出力フォーマット
 

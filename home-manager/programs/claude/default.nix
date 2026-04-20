@@ -4,11 +4,9 @@ let
   baseSettings = {
     "$schema" = "https://json.schemastore.org/claude-code-settings.json";
     language = "Japanese";
-    alwaysThinkingEnabled = true;
     autoCompact = false;
     autoMemoryEnabled = false;
-    effortLevel = "high";
-    env.CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS = "1";
+    effortLevel = "xhigh";
     includeCoAuthoredBy = false;
     enabledPlugins = {
       "typescript-lsp@claude-plugins-official" = true;
@@ -16,7 +14,7 @@ let
       "gopls-lsp@claude-plugins-official" = true;
     };
     permissions = {
-      defaultMode = "bypassPermissions";
+      defaultMode = "auto";
       allow = [
         # 読み取り・検索 — 全ファイル許可（deny で機密ファイルを除外）
         "Read"
@@ -32,15 +30,10 @@ let
         "Bash(jq *)"
         "Bash(jsonnet *)"
         "Bash(ls *)"
-        "Bash(cat *)"
-        "Bash(head *)"
-        "Bash(tail *)"
         "Bash(wc *)"
         "Bash(sort *)"
         "Bash(uniq *)"
         "Bash(diff *)"
-        "Bash(grep *)"
-        "Bash(find *)"
         "Bash(which *)"
         "Bash(echo *)"
         "Bash(pwd)"
@@ -65,6 +58,7 @@ let
         "mcp__serena"
       ];
       deny = [
+        "Bash(git push*)"
         "Bash(sudo *)"
         "Bash(su *)"
         "Read(.env)"

@@ -101,6 +101,7 @@
       "git"
       "go"
       "go-jsonnet"
+      "golangci-lint"
       "graphviz"
       "jq"
       "mise"
