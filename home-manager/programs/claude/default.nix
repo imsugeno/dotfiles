@@ -5,6 +5,9 @@ let
     "$schema" = "https://json.schemastore.org/claude-code-settings.json";
     language = "Japanese";
     alwaysThinkingEnabled = true;
+    # alwaysThinkingEnabled = true でも showThinkingSummaries のデフォルトは false のため
+    # インタラクティブセッションでは thinking block が redacted 表示となる。意図と揃える。
+    showThinkingSummaries = true;
     autoMemoryEnabled = false;
     effortLevel = "high";
     env.CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS = "1";
