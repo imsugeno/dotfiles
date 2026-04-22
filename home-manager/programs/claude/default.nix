@@ -10,7 +10,13 @@ let
     showThinkingSummaries = true;
     autoMemoryEnabled = false;
     effortLevel = "high";
-    env.CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS = "1";
+    env = {
+      CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS = "1";
+      # v2.1.83 で追加。Bash / hooks / MCP stdio サーバーのサブプロセス env から
+      # Anthropic・クラウドプロバイダーのクレデンシャルを剥奪する。deny ルールで
+      # 守っている .env / ~/.ssh / ~/.aws / secrets.jsonnet と同じ防御思想の defense-in-depth。
+      CLAUDE_CODE_SUBPROCESS_ENV_SCRUB = "1";
+    };
     # `includeCoAuthoredBy` は deprecated。attribution 設定で commit / pr 双方の帰属表示を空文字列化して抑止する。
     attribution = {
       commit = "";
