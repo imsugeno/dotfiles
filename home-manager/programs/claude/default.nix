@@ -4,8 +4,21 @@ let
   baseSettings = {
     "$schema" = "https://json.schemastore.org/claude-code-settings.json";
     language = "Japanese";
+    alwaysThinkingEnabled = true;
+    # alwaysThinkingEnabled = true でも showThinkingSummaries のデフォルトは false のため
+    # インタラクティブセッションでは thinking block が redacted 表示となる。意図と揃える。
+    showThinkingSummaries = true;
     autoMemoryEnabled = false;
+    # v2.1.111 で Opus 4.7 向けに追加された `xhigh`（`high` と `max` の中間）。
+    # alwaysThinkingEnabled = true と合わせて、Opus 4.7 の推論深度を引き上げる。
     effortLevel = "xhigh";
+    env = {
+      CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS = "1";
+      # v2.1.83 で追加。Bash / hooks / MCP stdio サーバーのサブプロセス env から
+      # Anthropic・クラウドプロバイダーのクレデンシャルを剥奪する。deny ルールで
+      # 守っている .env / ~/.ssh / ~/.aws / secrets.jsonnet と同じ防御思想の defense-in-depth。
+      CLAUDE_CODE_SUBPROCESS_ENV_SCRUB = "1";
+    };
     # `includeCoAuthoredBy` は deprecated。attribution 設定で commit / pr 双方の帰属表示を空文字列化して抑止する。
     attribution = {
       commit = "";
