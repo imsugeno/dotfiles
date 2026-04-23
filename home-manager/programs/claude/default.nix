@@ -9,7 +9,9 @@ let
     # インタラクティブセッションでは thinking block が redacted 表示となる。意図と揃える。
     showThinkingSummaries = true;
     autoMemoryEnabled = false;
-    effortLevel = "high";
+    # v2.1.111 で Opus 4.7 向けに追加された `xhigh`（`high` と `max` の中間）。
+    # alwaysThinkingEnabled = true と合わせて、Opus 4.7 の推論深度を引き上げる。
+    effortLevel = "xhigh";
     env = {
       CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS = "1";
       # v2.1.83 で追加。Bash / hooks / MCP stdio サーバーのサブプロセス env から
