@@ -14,6 +14,10 @@ let
     effortLevel = "xhigh";
     env = {
       CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS = "1";
+      # v2.1.117 で外部ビルド向けに有効化。サブエージェントを fork して走らせることで
+      # CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS = "1" と組み合わせた際に真の並列実行となり、
+      # 複数エージェント同時起動時のレイテンシとオーバーヘッドを削減する。
+      CLAUDE_CODE_FORK_SUBAGENT = "1";
       # v2.1.83 で追加。Bash / hooks / MCP stdio サーバーのサブプロセス env から
       # Anthropic・クラウドプロバイダーのクレデンシャルを剥奪する。deny ルールで
       # 守っている .env / ~/.ssh / ~/.aws / secrets.jsonnet と同じ防御思想の defense-in-depth。
