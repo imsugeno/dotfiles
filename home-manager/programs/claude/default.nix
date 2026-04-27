@@ -22,6 +22,11 @@ let
       # Anthropic・クラウドプロバイダーのクレデンシャルを剥奪する。deny ルールで
       # 守っている .env / ~/.ssh / ~/.aws / secrets.jsonnet と同じ防御思想の defense-in-depth。
       CLAUDE_CODE_SUBPROCESS_ENV_SCRUB = "1";
+      # v2.1.118 で追加。`DISABLE_AUTOUPDATER` より厳格で `claude update` も含む全更新経路を遮断する。
+      # claude-code は Homebrew cask + `homebrew.onActivation.upgrade = true` で管理しているため、
+      # 内部 autoupdater が走ると Homebrew 管理外の `~/.claude` 配下に並行インストールが生まれ
+      # バージョンの真実の所在が二重化する。Homebrew を単一の真実の所在として固定する。
+      DISABLE_UPDATES = "1";
     };
     # `includeCoAuthoredBy` は deprecated。attribution 設定で commit / pr 双方の帰属表示を空文字列化して抑止する。
     attribution = {
