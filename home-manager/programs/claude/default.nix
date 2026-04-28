@@ -33,6 +33,15 @@ let
       commit = "";
       pr = "";
     };
+    # v2.1.91 で追加。skill の inline shell 実行経路を遮断する。`permissions.deny` で守っている
+    # 機密ファイル防御と `CLAUDE_CODE_SUBPROCESS_ENV_SCRUB` の defense-in-depth 思想を skill 層まで拡張し、
+    # marketplace 由来の skill 経由で任意コード実行されるリスクを排除する。自作スキル群は markdown 命令のみで
+    # inline shell exec を使っていないため破壊的変更にはならない。
+    disableSkillShellExecution = true;
+    # v2.1.83 で追加。`claude-cli://` プロトコルハンドラーの OS 登録を抑止する。
+    # 通常はターミナル経由で claude を起動しており deep link は使っていないため機能損失はなく、
+    # URL scheme 経由の引数注入・意図しない起動経路を遮断する。
+    disableDeepLinkRegistration = true;
     enabledPlugins = {
       "typescript-lsp@claude-plugins-official" = true;
       "pyright-lsp@claude-plugins-official" = true;
