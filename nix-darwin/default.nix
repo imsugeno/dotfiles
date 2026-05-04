@@ -128,6 +128,7 @@
       "chromedriver"
       "claude"
       "claude-code"
+      "codex"
       "discord"
       "docker-desktop"
       "figma"
