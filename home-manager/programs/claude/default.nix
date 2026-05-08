@@ -27,6 +27,12 @@ let
       # 内部 autoupdater が走ると Homebrew 管理外の `~/.claude` 配下に並行インストールが生まれ
       # バージョンの真実の所在が二重化する。Homebrew を単一の真実の所在として固定する。
       DISABLE_UPDATES = "1";
+      # v2.1.108 で追加・v2.1.128 で正式対応。プロンプトキャッシュ TTL を 5 分 → 1 時間に延長する。
+      # Opus 4.7 + effortLevel = "xhigh" + AGENT_TEAMS / FORK_SUBAGENT という重い構成では、
+      # 拡張思考や並列サブエージェントが走る間に 5 分の TTL を簡単に超え、再書き込みコストが嵩む。
+      # 1h 書き込みは 5m の 2x コストだが、TTL 内に 2 回再ヒットすれば元が取れる前提で、
+      # ユーザーが確認・思考する数分〜数十分のポーズを跨いでもキャッシュが生きる方が正味でメリットが大きい。
+      ENABLE_PROMPT_CACHING_1H = "1";
     };
     # `includeCoAuthoredBy` は deprecated。attribution 設定で commit / pr 双方の帰属表示を空文字列化して抑止する。
     attribution = {
