@@ -38,6 +38,20 @@ let
       "pyright-lsp@claude-plugins-official" = true;
       "gopls-lsp@claude-plugins-official" = true;
     };
+    # v2.1.136 で追加。`permissions.defaultMode = "auto"` の auto mode 分類器に対し、
+    # user intent / allow 例外に関係なく無条件で拒否させる自然言語ルール。
+    # `permissions.deny` の構文ベース（`Bash(sudo *)` 等）はシェル経由の回避
+    # （`bash -lc "sudo ..."` 等）で抜けうるため、同じ defense-in-depth 思想を意図ベースで二重化する。
+    # `$defaults` で組み込みルールを継承する。
+    autoMode = {
+      hard_deny = [
+        "$defaults"
+        "Never read .env, .env.local, or any other .env.* files in any directory"
+        "Never read files under ~/.ssh, ~/.aws, or any secrets.jsonnet file"
+        "Never run sudo or su commands, even via shell wrappers, subshells, or pipes"
+        "Never run git push — the user pushes manually"
+      ];
+    };
     permissions = {
       defaultMode = "auto";
       allow = [
