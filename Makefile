@@ -27,6 +27,12 @@ help:
 
 # Apply configuration
 switch:
+	@# sudo で darwin-rebuild を実行する際、root の git が本リポジトリを信頼できるようにする
+	@REPO_PATH="$$(pwd)"; \
+	if ! sudo git config --global --get-all safe.directory 2>/dev/null | grep -qFx "$$REPO_PATH"; then \
+		echo "Adding $$REPO_PATH to root's git safe.directory..."; \
+		sudo git config --global --add safe.directory "$$REPO_PATH"; \
+	fi
 	sudo darwin-rebuild switch --flake ".#$(HOSTNAME)"
 
 # Build MCP server configurations

@@ -99,7 +99,7 @@
     "workbench.sideBar.location": "right",
     "github.copilot.editor.enableAutoCompletions": true,
     "diffEditor.ignoreTrimWhitespace": false,
-    "claudeCode.preferredLocation": "sidebar",
+    "claudeCode.preferredLocation": "panel",
     "claudeCode.allowDangerouslySkipPermissions": true,
     "claudeCode.initialPermissionMode": "acceptEdits",
     "claudeCode.useCtrlEnterToSend": true,
