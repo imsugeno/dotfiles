@@ -137,6 +137,7 @@
       "docker-desktop"
       "figma"
       "font-hack-nerd-font"
+      "gitify"
       "google-chrome"
       "iterm2"
       "karabiner-elements"
