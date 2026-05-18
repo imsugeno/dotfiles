@@ -13,6 +13,11 @@ let
     # alwaysThinkingEnabled = true と合わせて、Opus 4.7 の推論深度を引き上げる。
     effortLevel = "xhigh";
     env = {
+      # v2.1.36+ の Fast Mode（Opus 高速構成）を完全に無効化する。`/fast` コマンドも
+      # 「disabled by your organization」相当で弾かれる。Fast Mode は $30/$150 per MTok と
+      # 標準 Opus の倍以上のコストで、かつ additional usage に直接請求される（プラン枠を
+      # 消費しない）ため、誤って /fast を入力した際の事故的な高コスト発生を未然に防ぐ。
+      CLAUDE_CODE_DISABLE_FAST_MODE = "1";
       CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS = "1";
       # v2.1.117 で外部ビルド向けに有効化。サブエージェントを fork して走らせることで
       # CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS = "1" と組み合わせた際に真の並列実行となり、
@@ -114,14 +119,13 @@ let
       ];
     };
     hooks = {
-      Stop = [{
-        matcher = "";
-        hooks = [{
-          type = "command";
-          command = "${dotfilesPath}/home-manager/programs/claude/hooks/notify.ts";
-        }];
-      }];
-      PermissionRequest = [{
+      # `Stop` は各ターン終了ごとに発火するため、CLAUDE_CODE_FORK_SUBAGENT による fork 起動・
+      # 受け取りの中間ターンでも通知が走り、マルチエージェント時の S/N 比が悪化していた。
+      # `Notification` は Claude Code が能動的にユーザーへ知らせたい状況（メイン完了の
+      # idle_prompt、権限要求の permission_prompt、認証成功、MCP elicitation 等）でのみ
+      # 発火する。サブエージェント完了は `SubagentStop` 側に振り分けられるため、
+      # `Notification` のみ登録すれば望ましいタイミングだけ通知を受け取れる。
+      Notification = [{
         matcher = "";
         hooks = [{
           type = "command";
