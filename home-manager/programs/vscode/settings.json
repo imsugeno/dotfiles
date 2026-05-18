@@ -123,5 +123,6 @@
         "repositories": true,
         "searchAndCompare": true,
         "launchpad": false
-    }
+    },
+    "chat.disableAIFeatures": true
 }
