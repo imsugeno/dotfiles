@@ -44,6 +44,17 @@ let
       "pyright-lsp@claude-plugins-official" = true;
       "gopls-lsp@claude-plugins-official" = true;
     };
+    # v2.1.133 で追加・v2.1.143 でデフォルトが "head" → "fresh" (origin/<default>) に変更された。
+    # Agent tool の `isolation: "worktree"` / `--worktree` / `EnterWorktree` 起動時、
+    # デフォルトの "fresh" だと未push のローカル commits を含まない origin/<default> から
+    # worktree が作成され、作業中の WIP が agent 側に渡らない。
+    # サブエージェント並列実行（AGENT_TEAMS / FORK_SUBAGENT）で in-progress な変更を
+    # そのまま渡したい運用なので、"head" で旧挙動を明示固定する。
+    # autoupdate 経路（DISABLE_UPDATES=1 で塞いでいるが Homebrew 経由の昇格は走る）で
+    # サイレントに挙動が変わるのを防ぐ。
+    worktree = {
+      baseRef = "head";
+    };
     # v2.1.136 で追加。`permissions.defaultMode = "auto"` の auto mode 分類器に対し、
     # user intent / allow 例外に関係なく無条件で拒否させる自然言語ルール。
     # `permissions.deny` の構文ベース（`Bash(sudo *)` 等）はシェル経由の回避
