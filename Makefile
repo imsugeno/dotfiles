@@ -1,4 +1,4 @@
-.PHONY: help all switch update clean gc rebuild check mcp clean-mcp
+.PHONY: help all switch update clean gc rebuild check mcp clean-mcp claude-code
 
 # ホスト名の自動検出
 HOSTNAME := $(shell scutil --get LocalHostName)
@@ -14,6 +14,7 @@ help:
 	@echo "  make          - Build MCP config and apply nix-darwin configuration"
 	@echo "  make switch   - Apply the nix-darwin configuration"
 	@echo "  make mcp      - Build MCP server configurations from jsonnet"
+	@echo "  make claude-code - Install/update Claude Code native binary from GitHub Releases"
 	@echo "  make update   - Update flake inputs (nixpkgs, nix-darwin, home-manager)"
 	@echo "  make rebuild  - Update inputs and apply configuration"
 	@echo "  make check    - Check flake configuration"
@@ -26,7 +27,7 @@ help:
 	@echo "  3. Run 'make' from this directory"
 
 # Apply configuration
-switch:
+switch: claude-code
 	@# sudo で darwin-rebuild を実行する際、root の git が本リポジトリを信頼できるようにする
 	@REPO_PATH="$$(pwd)"; \
 	if ! sudo git config --global --get-all safe.directory 2>/dev/null | grep -qFx "$$REPO_PATH"; then \
@@ -34,6 +35,10 @@ switch:
 		sudo git config --global --add safe.directory "$$REPO_PATH"; \
 	fi
 	sudo darwin-rebuild switch --flake ".#$(HOSTNAME)"
+
+# Install/update Claude Code native binary from GitHub Releases
+claude-code:
+	./scripts/install-claude-code.sh
 
 # Build MCP server configurations
 mcp: clean-mcp

@@ -132,7 +132,6 @@
       "brave-browser"
       "chromedriver"
       "claude"
-      "claude-code"
       "discord"
       "docker-desktop"
       "figma"
