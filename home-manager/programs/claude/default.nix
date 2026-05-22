@@ -28,9 +28,9 @@ let
       # 守っている .env / ~/.ssh / ~/.aws / secrets.jsonnet と同じ防御思想の defense-in-depth。
       CLAUDE_CODE_SUBPROCESS_ENV_SCRUB = "1";
       # v2.1.118 で追加。`DISABLE_AUTOUPDATER` より厳格で `claude update` も含む全更新経路を遮断する。
-      # claude-code は Homebrew cask + `homebrew.onActivation.upgrade = true` で管理しているため、
-      # 内部 autoupdater が走ると Homebrew 管理外の `~/.claude` 配下に並行インストールが生まれ
-      # バージョンの真実の所在が二重化する。Homebrew を単一の真実の所在として固定する。
+      # claude-code は scripts/install-claude-code.sh で GitHub Releases から `~/.local/bin/claude` に
+      # 配置・更新しているため、内部 autoupdater が走ると dotfiles 管理外の `~/.claude` 配下に
+      # 並行インストールが生まれてバージョンの真実の所在が二重化する。dotfiles を単一の真実の所在として固定する。
       DISABLE_UPDATES = "1";
       # v2.1.108 で追加・v2.1.128 で正式対応。プロンプトキャッシュ TTL を 5 分 → 1 時間に延長する。
       # Opus 4.7 + effortLevel = "xhigh" + AGENT_TEAMS / FORK_SUBAGENT という重い構成では、
