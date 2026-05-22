@@ -101,6 +101,7 @@ let
         "Bash(cd *)"
         "Bash(sed *)"
         "Bash(awk *)"
+        "Bash(npx skills add:*)"
         # MCP — 現在設定中のサーバーを全許可
         "mcp__devin"
         "mcp__awslabs_aws-documentation-mcp-server"
