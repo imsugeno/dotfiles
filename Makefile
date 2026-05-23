@@ -1,4 +1,4 @@
-.PHONY: help all switch update clean gc rebuild check mcp clean-mcp claude-code
+.PHONY: help all switch update clean gc rebuild check mcp clean-mcp claude-code add-skill
 
 # ホスト名の自動検出
 HOSTNAME := $(shell scutil --get LocalHostName)
@@ -15,6 +15,7 @@ help:
 	@echo "  make switch   - Apply the nix-darwin configuration"
 	@echo "  make mcp      - Build MCP server configurations from jsonnet"
 	@echo "  make claude-code - Install/update Claude Code native binary from GitHub Releases"
+	@echo "  make add-skill URL=<github-url> - Install a Claude Code skill from a public GitHub repo"
 	@echo "  make update   - Update flake inputs (nixpkgs, nix-darwin, home-manager)"
 	@echo "  make rebuild  - Update inputs and apply configuration"
 	@echo "  make check    - Check flake configuration"
@@ -39,6 +40,12 @@ switch: claude-code
 # Install/update Claude Code native binary from GitHub Releases
 claude-code:
 	./scripts/install-claude-code.sh
+
+# Install a Claude Code skill from a public GitHub repo
+# Usage: make add-skill URL=https://github.com/<owner>/<repo>/tree/<ref>/<path-to-skill-dir>
+add-skill:
+	@[ -n "$(URL)" ] || (echo "Usage: make add-skill URL=https://github.com/<owner>/<repo>/tree/<ref>/<path>" >&2; exit 2)
+	deno run --allow-net --allow-read --allow-write scripts/add-skill.ts "$(URL)"
 
 # Build MCP server configurations
 mcp: clean-mcp
