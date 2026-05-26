@@ -21,6 +21,7 @@
       cc = "claude --effort max";
       ccr = "claude --effort max --resume";
       ccp = "claude --effort max -p";
+      cr = "coderabbit";
     };
 
     # Initialize with .zshrc content
