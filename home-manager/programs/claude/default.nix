@@ -13,6 +13,11 @@ let
     # alwaysThinkingEnabled = true と合わせて、Opus 4.7 の推論深度を引き上げる。
     effortLevel = "xhigh";
     env = {
+      # v2.1.36+ の Fast Mode（Opus 高速構成）を完全に無効化する。`/fast` コマンドも
+      # 「disabled by your organization」相当で弾かれる。Fast Mode は $30/$150 per MTok と
+      # 標準 Opus の倍以上のコストで、かつ additional usage に直接請求される（プラン枠を
+      # 消費しない）ため、誤って /fast を入力した際の事故的な高コスト発生を未然に防ぐ。
+      CLAUDE_CODE_DISABLE_FAST_MODE = "1";
       CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS = "1";
       # v2.1.117 で外部ビルド向けに有効化。サブエージェントを fork して走らせることで
       # CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS = "1" と組み合わせた際に真の並列実行となり、
@@ -23,10 +28,23 @@ let
       # 守っている .env / ~/.ssh / ~/.aws / secrets.jsonnet と同じ防御思想の defense-in-depth。
       CLAUDE_CODE_SUBPROCESS_ENV_SCRUB = "1";
       # v2.1.118 で追加。`DISABLE_AUTOUPDATER` より厳格で `claude update` も含む全更新経路を遮断する。
-      # claude-code は Homebrew cask + `homebrew.onActivation.upgrade = true` で管理しているため、
-      # 内部 autoupdater が走ると Homebrew 管理外の `~/.claude` 配下に並行インストールが生まれ
-      # バージョンの真実の所在が二重化する。Homebrew を単一の真実の所在として固定する。
+      # claude-code は scripts/install-claude-code.sh で GitHub Releases から `~/.local/bin/claude` に
+      # 配置・更新しているため、内部 autoupdater が走ると dotfiles 管理外の `~/.claude` 配下に
+      # 並行インストールが生まれてバージョンの真実の所在が二重化する。dotfiles を単一の真実の所在として固定する。
       DISABLE_UPDATES = "1";
+      # v2.1.108 で追加・v2.1.128 で正式対応。プロンプトキャッシュ TTL を 5 分 → 1 時間に延長する。
+      # Opus 4.7 + effortLevel = "xhigh" + AGENT_TEAMS / FORK_SUBAGENT という重い構成では、
+      # 拡張思考や並列サブエージェントが走る間に 5 分の TTL を簡単に超え、再書き込みコストが嵩む。
+      # 1h 書き込みは 5m の 2x コストだが、TTL 内に 2 回再ヒットすれば元が取れる前提で、
+      # ユーザーが確認・思考する数分〜数十分のポーズを跨いでもキャッシュが生きる方が正味でメリットが大きい。
+      ENABLE_PROMPT_CACHING_1H = "1";
+      # v2.1.143 で追加。GitHub から plugin を取得する際の clone を SSH ではなく HTTPS に固定する。
+      # `enabledPlugins` で `claude-plugins-official` 配下の typescript-lsp / pyright-lsp / gopls-lsp を
+      # 有効化しているため plugin 取得経路の信頼性は実害に直結する。SSH は ~/.ssh のキー設定・
+      # known_hosts・GitHub 側の鍵登録に依存し、新規マシンや CI / 一時環境では揃わない可能性がある。
+      # `DISABLE_UPDATES = "1"` で更新経路の真実の所在を Homebrew / GitHub Releases に固定したのと同じく、
+      # plugin 取得経路も環境差の少ない HTTPS に固定し、運用の予測可能性を高める defense-in-depth。
+      CLAUDE_CODE_PLUGIN_PREFER_HTTPS = "1";
     };
     # `includeCoAuthoredBy` は deprecated。attribution 設定で commit / pr 双方の帰属表示を空文字列化して抑止する。
     attribution = {
@@ -37,6 +55,31 @@ let
       "typescript-lsp@claude-plugins-official" = true;
       "pyright-lsp@claude-plugins-official" = true;
       "gopls-lsp@claude-plugins-official" = true;
+    };
+    # v2.1.133 で追加・v2.1.143 でデフォルトが "head" → "fresh" (origin/<default>) に変更された。
+    # Agent tool の `isolation: "worktree"` / `--worktree` / `EnterWorktree` 起動時、
+    # デフォルトの "fresh" だと未push のローカル commits を含まない origin/<default> から
+    # worktree が作成され、作業中の WIP が agent 側に渡らない。
+    # サブエージェント並列実行（AGENT_TEAMS / FORK_SUBAGENT）で in-progress な変更を
+    # そのまま渡したい運用なので、"head" で旧挙動を明示固定する。
+    # autoupdate 経路（DISABLE_UPDATES=1 で塞いでいるが Homebrew 経由の昇格は走る）で
+    # サイレントに挙動が変わるのを防ぐ。
+    worktree = {
+      baseRef = "head";
+    };
+    # v2.1.136 で追加。`permissions.defaultMode = "auto"` の auto mode 分類器に対し、
+    # user intent / allow 例外に関係なく無条件で拒否させる自然言語ルール。
+    # `permissions.deny` の構文ベース（`Bash(sudo *)` 等）はシェル経由の回避
+    # （`bash -lc "sudo ..."` 等）で抜けうるため、同じ defense-in-depth 思想を意図ベースで二重化する。
+    # `$defaults` で組み込みルールを継承する。
+    autoMode = {
+      hard_deny = [
+        "$defaults"
+        "Never read .env, .env.local, or any other .env.* files in any directory"
+        "Never read files under ~/.ssh, ~/.aws, or any secrets.jsonnet file"
+        "Never run sudo or su commands, even via shell wrappers, subshells, or pipes"
+        "Never run git push — the user pushes manually"
+      ];
     };
     permissions = {
       defaultMode = "auto";
@@ -94,14 +137,13 @@ let
       ];
     };
     hooks = {
-      Stop = [{
-        matcher = "";
-        hooks = [{
-          type = "command";
-          command = "${dotfilesPath}/home-manager/programs/claude/hooks/notify.ts";
-        }];
-      }];
-      PermissionRequest = [{
+      # `Stop` は各ターン終了ごとに発火するため、CLAUDE_CODE_FORK_SUBAGENT による fork 起動・
+      # 受け取りの中間ターンでも通知が走り、マルチエージェント時の S/N 比が悪化していた。
+      # `Notification` は Claude Code が能動的にユーザーへ知らせたい状況（メイン完了の
+      # idle_prompt、権限要求の permission_prompt、認証成功、MCP elicitation 等）でのみ
+      # 発火する。サブエージェント完了は `SubagentStop` 側に振り分けられるため、
+      # `Notification` のみ登録すれば望ましいタイミングだけ通知を受け取れる。
+      Notification = [{
         matcher = "";
         hooks = [{
           type = "command";

@@ -3,8 +3,15 @@
 interface HookData {
   session_id: string
   transcript_path: string
-  hook_event_name: "Stop" | "PermissionRequest"
-  stop_hook_active?: boolean
+  hook_event_name: "Notification"
+  notification_type?:
+    | "permission_prompt"
+    | "idle_prompt"
+    | "auth_success"
+    | "elicitation_dialog"
+    | "elicitation_complete"
+    | "elicitation_response"
+  message?: string
 }
 
 const main = async () => {
@@ -67,29 +74,16 @@ const main = async () => {
       repoInfo = currentDir.split("/").pop() || ""
     }
 
-    const process: Deno.Command = (() => {
-      if (data.hook_event_name === "Stop") {
-        return new Deno.Command("osascript", {
-          args: [
-            "-e",
-            `display notification "Task Completed 🚀" with title "⚡ Claude Code" subtitle "${repoInfo} 📦" sound name "Glass"`,
-          ],
-          stdout: "piped",
-          stderr: "piped",
-        })
-      } else if (data.hook_event_name === "PermissionRequest") {
-        return new Deno.Command("osascript", {
-          args: [
-            "-e",
-            `display notification "Permission Required 🔐" with title "⚡ Claude Code" subtitle "${repoInfo} 📦" sound name "Glass"`,
-          ],
-          stdout: "piped",
-          stderr: "piped",
-        })
-      } else {
-        throw new Error("unknown error")
-      }
-    })()
+    const body = data.message ?? "Notification 🔔"
+
+    const process = new Deno.Command("osascript", {
+      args: [
+        "-e",
+        `display notification "${body}" with title "⚡ Claude Code" subtitle "${repoInfo} 📦" sound name "Glass"`,
+      ],
+      stdout: "piped",
+      stderr: "piped",
+    })
 
     const result = await process.output()
 

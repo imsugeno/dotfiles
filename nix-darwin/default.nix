@@ -80,6 +80,12 @@
     fi
   '';
 
+  # ─── Nix Packages ───
+
+  environment.systemPackages = [
+    pkgs.awscli2
+  ];
+
   # ─── Homebrew ───
 
   homebrew = {
@@ -115,7 +121,6 @@
       "wget"
       "zsh-autosuggestions"
       "zsh-syntax-highlighting"
-      "awscli"
       "gemini-cli"
     ];
     casks = [
@@ -133,6 +138,7 @@
       "docker-desktop"
       "figma"
       "font-hack-nerd-font"
+      "gitify"
       "google-chrome"
       "iterm2"
       "karabiner-elements"
@@ -145,8 +151,5 @@
       "spotify"
       "visual-studio-code"
     ];
-    masApps = {
-      "Kindle" = 302584613;
-    };
   };
 }

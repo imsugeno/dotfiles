@@ -3,10 +3,13 @@
 {
   programs.git = {
     enable = true;
-    userName = gitConfig.userName;
-    userEmail = gitConfig.userEmail;
 
-    extraConfig = {
+    settings = {
+      user = {
+        name = gitConfig.userName;
+        email = gitConfig.userEmail;
+      };
+
       init.defaultBranch = "main";
 
       ghq.root = "~/repos";
@@ -28,17 +31,17 @@
       diff.colorMoved = "default";
 
       merge.conflictStyle = "diff3";
-    };
 
-    aliases = {
-      st = "status";
-      co = "checkout";
-      br = "branch";
-      ci = "commit";
-      lg = "log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit";
-      lo = "log --oneline";
-      unstage = "reset HEAD --";
-      last = "log -1 HEAD";
+      alias = {
+        st = "status";
+        co = "checkout";
+        br = "branch";
+        ci = "commit";
+        lg = "log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit";
+        lo = "log --oneline";
+        unstage = "reset HEAD --";
+        last = "log -1 HEAD";
+      };
     };
 
     ignores = [
