@@ -1,7 +1,7 @@
 ---
 name: git-commit
 description: 変更を分析して適切なprefixを付けたコミットメッセージを作成
-model: sonnet
+model: sonnet[1m]
 arguments: false
 ---
 

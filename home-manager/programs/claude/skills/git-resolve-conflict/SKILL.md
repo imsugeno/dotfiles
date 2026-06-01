@@ -1,8 +1,8 @@
 ---
 name: git-resolve-conflict
 description: Gitコンフリクトの原因を特定し、ユーザー確認のもとで解消する
-model: opusplus
-effort: max
+model: opus[1m]
+effort: high
 ---
 
 Gitコンフリクトの原因を特定し、どのように解決するかをユーザーに確認してから解消する。自己判断での変更は行わない。

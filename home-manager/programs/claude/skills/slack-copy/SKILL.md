@@ -1,7 +1,6 @@
 ---
 name: slack-copy
 description: Slack向けリッチテキストとしてクリップボードにコピー
-model: haiku
 arguments: true
 ---
 

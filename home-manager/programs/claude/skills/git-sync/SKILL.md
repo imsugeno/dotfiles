@@ -1,7 +1,7 @@
 ---
 name: git-sync
 description: 現在の変更を退避してブランチを最新化し、変更を復元する
-model: sonnet
+model: sonnet[1m]
 ---
 
 現在の変更を `git stash -u` で退避し、`git pull` でブランチを最新化してから `git stash apply` で変更を復元する。

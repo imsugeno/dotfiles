@@ -1,8 +1,8 @@
 ---
 name: daily-report
 description: 本日の全セッションログを解析し、プロジェクト別の日報を生成
-model: opusplan
-effort: max
+model: opus[1m]
+effort: high
 arguments: true
 ---
 
