@@ -99,7 +99,6 @@
     "console-ninja.featureSet": "Community",
     "git.autofetch": true,
     "workbench.sideBar.location": "right",
-    "github.copilot.editor.enableAutoCompletions": true,
     "diffEditor.ignoreTrimWhitespace": false,
     "claudeCode.preferredLocation": "panel",
     "claudeCode.allowDangerouslySkipPermissions": true,
