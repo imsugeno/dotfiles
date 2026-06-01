@@ -1,4 +1,4 @@
-{ config, lib, dotfilesPath, ... }:
+{ config, lib, pkgs, dotfilesPath, ... }:
 
 let
   baseSettings = {
@@ -174,8 +174,31 @@ in
   # Claude configuration management
   # Uses symlinks to manage configuration files from dotfiles repository
 
-  # settings.json を動的生成
-  home.file.".config/claude/settings.json".text = builtins.toJSON settings;
+  # settings.json は `claude plugin install` 等が runtime に書き換えるため、
+  # /nix/store 配下の immutable file への symlink では EACCES で失敗する。
+  # activation script で書き込み可能な実ファイルとして配置し、
+  # `enabledPlugins` は既存ファイルからマージして runtime 追加分を保持する。
+  home.activation.claudeSettings = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+    TARGET="$HOME/.config/claude/settings.json"
+    TMP="$TARGET.tmp"
+    BASE=${lib.escapeShellArg (builtins.toJSON settings)}
+
+    # 旧 home.file 管理時の symlink が残っていれば外す
+    if [ -L "$TARGET" ]; then
+      $DRY_RUN_CMD rm "$TARGET"
+    fi
+
+    # 既存ファイルから enabledPlugins を取り出して保持する（runtime install 分を失わないため）
+    EXISTING_PLUGINS='{}'
+    if [ -f "$TARGET" ]; then
+      EXISTING_PLUGINS=$(${pkgs.jq}/bin/jq -c '.enabledPlugins // {}' "$TARGET" 2>/dev/null || echo '{}')
+    fi
+
+    $DRY_RUN_CMD ${pkgs.jq}/bin/jq --argjson existing "$EXISTING_PLUGINS" \
+      '.enabledPlugins = (.enabledPlugins + $existing)' <<< "$BASE" > "$TMP"
+    $DRY_RUN_CMD mv "$TMP" "$TARGET"
+    $DRY_RUN_CMD chmod 644 "$TARGET"
+  '';
 
   home.file.".config/claude/CLAUDE.md" = {
     source = config.lib.file.mkOutOfStoreSymlink "${dotfilesPath}/home-manager/programs/claude/CLAUDE.md";
