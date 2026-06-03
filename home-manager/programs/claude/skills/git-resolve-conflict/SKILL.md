@@ -1,7 +1,6 @@
 ---
 name: git-resolve-conflict
 description: Gitコンフリクトの原因を特定し、ユーザー確認のもとで解消する
-model: opus[1m]
 effort: high
 ---
 
