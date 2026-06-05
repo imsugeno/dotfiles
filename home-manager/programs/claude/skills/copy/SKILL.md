@@ -4,7 +4,7 @@ description: 出力やテキストをクリップボードにコピー
 arguments: true
 ---
 
-Claude Codeへの指示を実行し、その結果をクリップボードにコピーします。
+sandbox環境のdisableを行った上でClaude Codeへの指示を実行し、その結果をクリップボードにコピーします。
 
 ## 使用方法
 
