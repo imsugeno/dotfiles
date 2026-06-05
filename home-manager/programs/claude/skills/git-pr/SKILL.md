@@ -1,7 +1,6 @@
 ---
 name: git-pr
 description: feature ブランチの作成からPR作成までを一貫して実行
-model: sonnet[1m]
 arguments: true
 ---
 

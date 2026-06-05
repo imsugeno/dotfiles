@@ -1,7 +1,6 @@
 ---
 name: pr-spec
 description: PRの差分から追加・変更・削除された仕様を一覧化してレビューを補助
-model: opus[1m]
 effort: high
 arguments: true
 ---
