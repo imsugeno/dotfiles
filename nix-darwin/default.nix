@@ -114,6 +114,7 @@
       "ni"
       "peco"
       "qrencode"
+      "rustup"
       "starship"
       "tfenv"
       "tmux"

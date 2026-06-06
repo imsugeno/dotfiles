@@ -23,6 +23,9 @@ export PATH="/opt/homebrew/bin:$PATH"
 PATH=~/.console-ninja/.bin:$PATH
 export PATH="$HOME/.local/bin:$PATH"
 export PATH="/opt/homebrew/opt/openjdk/bin:$PATH"
+# Rust toolchain (rustup is keg-only; toolchain shims live in ~/.cargo/bin)
+export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
+export PATH="$HOME/.cargo/bin:$PATH"
 
 # Enable colors for ls
 export CLICOLOR=1
