@@ -10,13 +10,24 @@ let
     showThinkingSummaries = true;
     autoMemoryEnabled = false;
     # v2.1.111 で Opus 4.7 向けに追加された `xhigh`（`high` と `max` の中間）。
-    # alwaysThinkingEnabled = true と合わせて、Opus 4.7 の推論深度を引き上げる。
+    # v2.1.154 で `opus` alias のデフォルト解決先が Opus 4.8 に切り替わり、4.8 のデフォルト
+    # effort は `high` になったため、xhigh を明示することで 4.8 でも一段深い推論を引き出す。
+    # xhigh は 4.7 / 4.8 双方でサポートされる。alwaysThinkingEnabled = true と合わせて
+    # 推論深度を引き上げる。
     effortLevel = "xhigh";
+    # v2.1.166 で追加。プライマリモデル (`opus` alias = Opus 4.8) が overloaded / 非リトライ可能な
+    # API エラーで利用不能になったとき、優先順に最大 3 つまでのフォールバック先を試す
+    # （ターンに対して 1 回リトライ）。v2.1.166 で `--fallback-model` が interactive session にも
+    # 適用されるようになったため、Agent Teams + xhigh + 1h cache の重い構成でピーク時に
+    # 4.8 が overloaded になっても対話を中断せず Sonnet 4.6 で継続できる。alias で記述することで
+    # 将来のモデル世代切替に追従する。
+    fallbackModel = [ "sonnet" ];
     env = {
       # v2.1.36+ の Fast Mode（Opus 高速構成）を完全に無効化する。`/fast` コマンドも
-      # 「disabled by your organization」相当で弾かれる。Fast Mode は $30/$150 per MTok と
-      # 標準 Opus の倍以上のコストで、かつ additional usage に直接請求される（プラン枠を
-      # 消費しない）ため、誤って /fast を入力した際の事故的な高コスト発生を未然に防ぐ。
+      # 「disabled by your organization」相当で弾かれる。v2.1.154 で Opus 4.8 の Fast Mode は
+      # 標準 Opus の 2x コスト / 2.5x スピードへ引き下げられたが、依然として標準より高コストで
+      # additional usage に直接請求される（プラン枠を消費しない）。誤って /fast を入力した際の
+      # 事故的な高コスト発生を未然に防ぐ意図は維持。
       CLAUDE_CODE_DISABLE_FAST_MODE = "1";
       CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS = "1";
       # v2.1.117 で外部ビルド向けに有効化。サブエージェントを fork して走らせることで
@@ -33,8 +44,8 @@ let
       # 並行インストールが生まれてバージョンの真実の所在が二重化する。dotfiles を単一の真実の所在として固定する。
       DISABLE_UPDATES = "1";
       # v2.1.108 で追加・v2.1.128 で正式対応。プロンプトキャッシュ TTL を 5 分 → 1 時間に延長する。
-      # Opus 4.7 + effortLevel = "xhigh" + AGENT_TEAMS / FORK_SUBAGENT という重い構成では、
-      # 拡張思考や並列サブエージェントが走る間に 5 分の TTL を簡単に超え、再書き込みコストが嵩む。
+      # Opus 4.8 (`opus` alias デフォルト) + effortLevel = "xhigh" + AGENT_TEAMS / FORK_SUBAGENT
+      # という重い構成では、拡張思考や並列サブエージェントが走る間に 5 分の TTL を簡単に超え、再書き込みコストが嵩む。
       # 1h 書き込みは 5m の 2x コストだが、TTL 内に 2 回再ヒットすれば元が取れる前提で、
       # ユーザーが確認・思考する数分〜数十分のポーズを跨いでもキャッシュが生きる方が正味でメリットが大きい。
       ENABLE_PROMPT_CACHING_1H = "1";
