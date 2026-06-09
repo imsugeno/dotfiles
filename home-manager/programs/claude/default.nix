@@ -12,6 +12,11 @@ let
     # v2.1.111 で Opus 4.7 向けに追加された `xhigh`（`high` と `max` の中間）。
     # alwaysThinkingEnabled = true と合わせて、Opus 4.7 の推論深度を引き上げる。
     effortLevel = "xhigh";
+    # v2.1.166 で追加。プライマリ（Opus 4.7 + effortLevel = "xhigh"）が unavailable / rate-limited な
+    # 状況での自動フォールバック先。AGENT_TEAMS / FORK_SUBAGENT を有効化した重い構成では並列
+    # リクエストが集中して rate limit を踏みやすく、fallback を持たないとセッション自体が停止する。
+    # 品質階層が最も近い Sonnet 4.6 を選択（Haiku は速度寄りで深い思考タスクには不向き）。
+    fallbackModel = "claude-sonnet-4-6";
     env = {
       # v2.1.36+ の Fast Mode（Opus 高速構成）を完全に無効化する。`/fast` コマンドも
       # 「disabled by your organization」相当で弾かれる。Fast Mode は $30/$150 per MTok と
