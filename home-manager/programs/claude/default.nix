@@ -10,13 +10,20 @@ let
     showThinkingSummaries = true;
     autoMemoryEnabled = false;
     # v2.1.111 で Opus 4.7 向けに追加された `xhigh`（`high` と `max` の中間）。
-    # alwaysThinkingEnabled = true と合わせて、Opus 4.7 の推論深度を引き上げる。
+    # 当時の Opus 4.7 ではデフォルトが `xhigh` だったため設定値は default 維持の意味だったが、
+    # v2.1.154 で Opus 4.8 がリリースされて以降、`opus` alias (Anthropic API) は Opus 4.8 を指し、
+    # Opus 4.8 のデフォルト effort は `high` に下がっている（`xhigh` も引き続きサポート）。
+    # alwaysThinkingEnabled = true と合わせて、現行 Opus 4.8 のデフォルト `high` を明示的に
+    # 上書きし、推論深度を以前と同等以上に保つ。`xhigh` は session 跨ぎで永続する正規レベル。
     effortLevel = "xhigh";
     env = {
       # v2.1.36+ の Fast Mode（Opus 高速構成）を完全に無効化する。`/fast` コマンドも
-      # 「disabled by your organization」相当で弾かれる。Fast Mode は $30/$150 per MTok と
-      # 標準 Opus の倍以上のコストで、かつ additional usage に直接請求される（プラン枠を
-      # 消費しない）ため、誤って /fast を入力した際の事故的な高コスト発生を未然に防ぐ。
+      # 「disabled by your organization」相当で弾かれる。Fast Mode は additional usage に
+      # 直接請求される（プラン枠を消費しない）ため、誤って /fast を入力した際の事故的な
+      # 高コスト発生を未然に防ぐ。v2.1.154 で Opus 4.8 の Fast Mode は標準 Opus 比 2x rate
+      # × 2.5x speed に価格改定されたが、それでも追加課金経路であることに変わりはなく、
+      # かつ lean system prompt がデフォルト化された Opus 4.8 では通常モードでも十分速いため、
+      # 速度メリットに対してコスト経路を分けるリスクが見合わない。
       CLAUDE_CODE_DISABLE_FAST_MODE = "1";
       CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS = "1";
       # v2.1.117 で外部ビルド向けに有効化。サブエージェントを fork して走らせることで
