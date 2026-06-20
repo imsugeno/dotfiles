@@ -46,10 +46,14 @@ let
       # plugin 取得経路も環境差の少ない HTTPS に固定し、運用の予測可能性を高める defense-in-depth。
       CLAUDE_CODE_PLUGIN_PREFER_HTTPS = "1";
     };
-    # `includeCoAuthoredBy` は deprecated。attribution 設定で commit / pr 双方の帰属表示を空文字列化して抑止する。
+    # `includeCoAuthoredBy` は deprecated。attribution 設定で帰属表示を空文字列化して抑止する。
+    # v2.1.183 で `sessionUrl` が追加。commit / PR 末尾に Claude Code が挿入する
+    # `Claude-Session: https://claude.ai/code/session_*` トレイラーも空文字列化し、
+    # commit / pr で Co-Authored-By を消しているのと同じ delete-by-default に揃える。
     attribution = {
       commit = "";
       pr = "";
+      sessionUrl = "";
     };
     enabledPlugins = {
       "typescript-lsp@claude-plugins-official" = true;
