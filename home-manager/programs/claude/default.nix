@@ -9,6 +9,13 @@ let
     # インタラクティブセッションでは thinking block が redacted 表示となる。意図と揃える。
     showThinkingSummaries = true;
     autoMemoryEnabled = false;
+    # v2.1.186 で `!` bash コマンドのデフォルト挙動が context-only から Claude が出力に
+    # 対して自動応答する形に変わった。Opus 4.7 + effortLevel = "xhigh" +
+    # AGENT_TEAMS / FORK_SUBAGENT + 1h prompt caching の重い構成では、`!ls` や
+    # `!git status` のような軽い確認コマンドでも自動で API コールが走るとコストが嵩む。
+    # CLAUDE_CODE_DISABLE_FAST_MODE / DISABLE_UPDATES と同じく、意図せぬコスト発生と
+    # サイレントな挙動変化を避けるため旧挙動を明示固定する。
+    respondToBashCommands = false;
     # v2.1.111 で Opus 4.7 向けに追加された `xhigh`（`high` と `max` の中間）。
     # alwaysThinkingEnabled = true と合わせて、Opus 4.7 の推論深度を引き上げる。
     effortLevel = "xhigh";
