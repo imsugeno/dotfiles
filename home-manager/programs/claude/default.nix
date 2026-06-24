@@ -47,9 +47,15 @@ let
       CLAUDE_CODE_PLUGIN_PREFER_HTTPS = "1";
     };
     # `includeCoAuthoredBy` は deprecated。attribution 設定で commit / pr 双方の帰属表示を空文字列化して抑止する。
+    # v2.1.183 で追加された `sessionUrl` は web / Remote Control セッションからの commit / PR に
+    # `Claude-Session: https://claude.ai/code/...` トレーラーを付与する独立フラグで、`commit` / `pr`
+    # の空文字列化では塞げない。公式ドキュメント (https://code.claude.com/docs/en/settings#attribution-settings)
+    # でも「all attribution を隠すには `commit` / `pr` を空文字 + `sessionUrl = false`」と明記されており、
+    # 三者を揃えて attribution 抑止の意図を完結させる。
     attribution = {
       commit = "";
       pr = "";
+      sessionUrl = false;
     };
     enabledPlugins = {
       "typescript-lsp@claude-plugins-official" = true;
