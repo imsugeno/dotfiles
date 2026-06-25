@@ -39,6 +39,8 @@ Claude Codeへの指示を実行し、その結果をSlack に貼り付け可能
 
 同じディレクトリにある `md2slack.ts` スクリプトを使用する。このスクリプトは stdin から Markdown を受け取り、Slack 向けの前処理 → HTML 変換 → リッチテキストとしてクリップボードにコピーを一括で行う。
 
+スクリプトは内部で `osascript` を使ってクリップボードへ書き込むため、サンドボックス下では失敗する。`md2slack.ts` を実行する Bash 呼び出しは `dangerouslyDisableSandbox: true` を指定してサンドボックスを無効化して実行する。
+
 ```bash
 echo "<Markdownテキスト>" | <このスキルのベースディレクトリ>/md2slack.ts
 ```
@@ -65,6 +67,7 @@ EOF
 
 ## 注意事項
 
+- `md2slack.ts` を実行する Bash 呼び出しは `dangerouslyDisableSandbox: true` を指定する。`osascript` でのクリップボード書き込みがサンドボックス下ではブロックされる
 - Deno が必要（`npm:marked` を自動取得）
 - macOS の `osascript` を使用してリッチテキストをクリップボードに設定
 - Slack は見出し・テーブルをサポートしないため、スクリプトが自動変換する
