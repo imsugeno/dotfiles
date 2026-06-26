@@ -85,7 +85,17 @@ let
     # `permissions.deny` の構文ベース（`Bash(sudo *)` 等）はシェル経由の回避
     # （`bash -lc "sudo ..."` 等）で抜けうるため、同じ defense-in-depth 思想を意図ベースで二重化する。
     # `$defaults` で組み込みルールを継承する。
+    #
+    # v2.1.193 で `classifyAllShell` が追加された。デフォルトでは auto mode 分類器は
+    # 「arbitrary-code-execution パターン」にマッチする shell コマンドのみを評価対象とするため、
+    # `bash -lc "sudo ..."` のような明示的にラップされていない実行経路は分類器を素通りし、
+    # 上の `hard_deny`（"Never run sudo... even via shell wrappers, subshells, or pipes"）が
+    # 評価されないまま実行されうる。`classifyAllShell = true` で全 Bash / PowerShell コマンドを
+    # 強制的に分類器へ通し、意図ベースの hard_deny ルールが必ず評価されるようにする。
+    # 分類器コール分のレイテンシと token コストは増えるが、`hard_deny` を「実際に効くガード」に
+    # するための必須設定であり、defense-in-depth の意図と整合する。
     autoMode = {
+      classifyAllShell = true;
       hard_deny = [
         "$defaults"
         "Never read .env, .env.local, or any other .env.* files in any directory"
