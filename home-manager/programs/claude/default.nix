@@ -86,6 +86,17 @@ let
     # （`bash -lc "sudo ..."` 等）で抜けうるため、同じ defense-in-depth 思想を意図ベースで二重化する。
     # `$defaults` で組み込みルールを継承する。
     autoMode = {
+      # v2.1.193 で追加。`permissions.allow` にマッチしたシェルコマンドも例外なく
+      # auto-mode classifier 経由でルーティングする。デフォルト挙動では allow ルール
+      # （例: `Bash(git *)` / `Bash(make *)`）にマッチしたコマンドは classifier を
+      # スキップして即座に許可されるため、`hard_deny` の意図ベースルール
+      # （"Never run git push" 等）が allow 経由のコマンドには適用されない穴があった。
+      # `Bash(git push*)` の構文 deny に加えて、`Bash(git *)` allow にマッチした
+      # `git push` 系のコマンドも `hard_deny` で確実にブロックさせ、三層防御を完成させる。
+      # auto mode classifier 経由となるため軽い軽量呼び出しでもレイテンシが乗るが、
+      # 構文ベース回避（`bash -lc "git push ..."` / `make` 経由の sudo 等）を意図ベースで
+      # 塞ぐ価値を優先する。
+      classifyAllShell = true;
       hard_deny = [
         "$defaults"
         "Never read .env, .env.local, or any other .env.* files in any directory"
