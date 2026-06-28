@@ -86,6 +86,17 @@ let
     # （`bash -lc "sudo ..."` 等）で抜けうるため、同じ defense-in-depth 思想を意図ベースで二重化する。
     # `$defaults` で組み込みルールを継承する。
     autoMode = {
+      # v2.1.193 で追加。デフォルトでは `permissions.allow` にマッチした Bash コマンドは
+      # 分類器を素通りし、auto mode の判定（破壊的 git 操作・curl|bash・本番デプロイ等の
+      # `$defaults` ブロック）も適用されない。`Bash(git *)` / `Bash(brew *)` / `Bash(make *)`
+      # のような広い allow ルールを並べている本構成では、allow に該当する範囲内で
+      # `git reset --hard` 等の destructive コマンドが分類器を経ずに通る余地がある。
+      # `hard_deny` を意図ベースで二重化したのと同じ defense-in-depth 思想で、
+      # 全 Bash / PowerShell を分類器経由に強制する。`$defaults` の destructive git ガード
+      # （v2.1.183 で追加された `git reset --hard` 等）も allow 配下のコマンドに効くようになる。
+      # 各コマンドで分類器コールが 1 回増えるが、Opus 4.7 + xhigh + 1h caching の重い構成では
+      # 既に classifier latency より遥かに大きな round-trip を払っており、相対的なオーバーヘッドは小さい。
+      classifyAllShell = true;
       hard_deny = [
         "$defaults"
         "Never read .env, .env.local, or any other .env.* files in any directory"
