@@ -86,6 +86,15 @@ let
     # （`bash -lc "sudo ..."` 等）で抜けうるため、同じ defense-in-depth 思想を意図ベースで二重化する。
     # `$defaults` で組み込みルールを継承する。
     autoMode = {
+      # v2.1.193 で追加。デフォルトでは auto mode classifier は arbitrary-code-execution
+      # パターンに該当する Bash / PowerShell コマンドにしか走らないため、`permissions.allow`
+      # の `Bash(git *)` / `Bash(cd *)` 等で構文ベース許可されたコマンドは classifier を
+      # スキップし、`hard_deny` の intent-based ルールが評価されない経路が残っていた。
+      # `classifyAllShell = true` で全 shell コマンドを classifier に通し、
+      # `Bash(git *)` 経由の `git push` や、allow に近いラッパー越し sudo を `hard_deny` で
+      # 確実に阻止する。`permissions.deny` の構文ベース禁止と `hard_deny` の意図ベース禁止を
+      # 二重化する既存の defense-in-depth 思想（下記コメント参照）を完成させる。
+      classifyAllShell = true;
       hard_deny = [
         "$defaults"
         "Never read .env, .env.local, or any other .env.* files in any directory"
