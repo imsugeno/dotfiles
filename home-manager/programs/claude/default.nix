@@ -93,6 +93,17 @@ let
         "Never run sudo or su commands, even via shell wrappers, subshells, or pipes"
         "Never run git push — the user pushes manually"
       ];
+      # v2.1.193 で追加。auto mode 中、`Bash(*)` のような広い allow を除く narrow な
+      # Bash / PowerShell allow rule はデフォルトで分類器を素通りする。
+      # 本設定の `permissions.allow` には `Bash(git *)` / `Bash(sed *)` / `Bash(cp *)` /
+      # `Bash(chmod *)` 等、prefix が想定していない破壊的引数を許してしまう幅の広い
+      # パターンが含まれる（例: `sed -i` で任意ファイル書き換え、`cp` で機密ファイル退避、
+      # `git reset --hard` で未 push commit の破棄）。
+      # `true` にすると全 shell コマンドが分類器を通り、上の `hard_deny` の自然言語ルール
+      # （"Never read files under ~/.ssh" / "Never run sudo ..." 等）が allow-listed shell に
+      # 対しても効くようになる。分類器 1 コール分のレイテンシが乗るが、
+      # ENABLE_PROMPT_CACHING_1H で速度より defense-in-depth を優先している既存方針と揃える。
+      classifyAllShell = true;
     };
     permissions = {
       defaultMode = "auto";
