@@ -1,10 +1,47 @@
 ---
 name: grill-me
-description: Interview the user relentlessly about a plan or design until reaching shared understanding, resolving each branch of the decision tree. Use when user wants to stress-test a plan, get grilled on their design, or mentions "grill me".
+description: Interview the user relentlessly about a plan or design until reaching shared understanding, resolving each branch of the decision tree. Sync level is adjustable (sync / batch / doc) to trade round-trips for interactivity. Use when user wants to stress-test a plan, get grilled on their design, or mentions "grill me".
 ---
 
-Interview me relentlessly about every aspect of this plan until we reach a shared understanding. Walk down each branch of the design tree, resolving dependencies between decisions one-by-one. For each question, provide your recommended answer.
+# grill-me
 
-Ask the questions one at a time.
+計画や設計の決定木を、すべての枝が解決されるまでユーザーと詰める。
+同期レベル（1往復で解決する決定の数）を切り替えられるが、どのレベルでも以下の不変条件を守る。
+これが grill を plan（計画の提示と承認）と分けるものである。
 
-If a question can be answered by exploring the codebase, explore the codebase instead.
+## 不変条件（全レベル共通）
+
+- 提示する項目はすべて、選択肢を持つ**未決定の決定**である。承認を求める完成した計画を提示しない。
+- 各項目は、その決定を迫る理由（計画が決めていないこと、矛盾しうる点、見落としうる失敗）から書き始める。解決策の説明から始めない。
+- 各決定には選択肢・トレードオフ・推奨案とその根拠を添える。
+- コードベースを調べれば答えが出る問いは、ユーザーに聞かず調べて埋める。
+- 下流の決定（他の決定の回答に依存するもの）を先回りして仮決めしない。上流が解決してから問う。
+- 「全部推奨案で」のような一括承認は解決とみなさない。推奨に自信のない決定と影響の大きい決定に絞って、個別に確認し直す。
+
+## 同期レベル
+
+ユーザーが指定（sync / batch / doc）すればそれに従う。
+指定がなければ、決定木を見積もって提案する。目安は、未決定が 5 個程度までなら sync、それ以上なら batch、決定木が大きく往復を減らしたい場合は doc。
+
+### sync（1問ずつ）
+
+一度に 1 つだけ質問し、回答を受けてから次に進む。依存が深い・手戻りの影響が大きい設計に向く。
+
+### batch（依存層ごと）
+
+決定木の現在のフロンティア（互いに依存せず、今すぐ答えられる決定）を最大 5 個まとめて提示する。
+回答で開いた枝を次のバッチにする。依存し合う決定を同じバッチに入れない。
+
+### doc（ドキュメント）
+
+決定木全体を洗い出し、japanese-tech-writing スキルの規範に従った意思決定ドキュメントを作成して Artifacts に公開する（Artifact ツールがない環境では md ファイルとして出力する）。
+
+ドキュメントは計画書ではなく質問状である。読み終えたユーザーが番号ごとに回答できる形にする。
+
+- 各決定を番号付きの節にし、「この決定を迫る理由」「選択肢とトレードオフ」「推奨案と根拠」を書く。
+- 下流の決定は中身を書かず、「保留中の決定」として依存元の番号とともに一覧する。保留一覧があることで、ドキュメントが全体を決め切った計画に見えることを防ぐ。
+- 回答を受けたら、開いた枝の数に応じて batch か sync で追撃する。1 回のドキュメントで終わらせようとしない。
+
+## 終了条件
+
+すべての枝が解決したら、決定の一覧（決定・選んだ選択肢・理由）を記録として提示して終える。
