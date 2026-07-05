@@ -85,7 +85,18 @@ let
     # `permissions.deny` の構文ベース（`Bash(sudo *)` 等）はシェル経由の回避
     # （`bash -lc "sudo ..."` 等）で抜けうるため、同じ defense-in-depth 思想を意図ベースで二重化する。
     # `$defaults` で組み込みルールを継承する。
+    #
+    # v2.1.193 で追加された `classifyAllShell = true` で allow rules を suspend し、
+    # 全 Bash / PowerShell コマンドを分類器に通す。既存の `permissions.allow` は
+    # `Bash(cp *)` / `Bash(chmod *)` / `Bash(sed *)` / `Bash(awk *)` 等を含み、
+    # これらは分類器をバイパスするため `cp ~/.ssh/id_rsa /tmp/` や
+    # `chmod +r ~/.ssh/*` / `sed 'e cmd' ...` で `hard_deny` の意図を素通りできてしまう。
+    # 全コマンドを分類器に通すことで hard_deny の適用域をシェル全域に広げる。
+    # 代償として Bash 呼び出しごとに分類器コールが 1 回増えるが、
+    # `respondToBashCommands = false` で `!` 経由の自動応答は既に抑止済みで、
+    # ツール経由の Bash に対する分類器コストは credential 保護の価値と釣り合う。
     autoMode = {
+      classifyAllShell = true;
       hard_deny = [
         "$defaults"
         "Never read .env, .env.local, or any other .env.* files in any directory"
