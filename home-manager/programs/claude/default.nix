@@ -86,6 +86,14 @@ let
     # （`bash -lc "sudo ..."` 等）で抜けうるため、同じ defense-in-depth 思想を意図ベースで二重化する。
     # `$defaults` で組み込みルールを継承する。
     autoMode = {
+      # v2.1.193 で追加。デフォルト（false）では `permissions.allow` にマッチした Bash / PowerShell は
+      # auto mode 分類器をスキップして直接実行されるため、`Bash(git *)` 等 allow 済みプレフィクスから
+      # `git status; sudo ...` のような複合コマンドや、`bash -lc "sudo ..."` 経由のシェル回避で
+      # hard_deny の意図ベースルールが素通りする経路が残る。true にすれば allow マッチの有無に関わらず
+      # 全 Bash / PowerShell が分類器を通り、hard_deny が確実に評価される。
+      # 構文ベース（`permissions.deny`）と意図ベース（`autoMode.hard_deny`）を二重化する
+      # 既存の defense-in-depth を、分類器の経路自体を強制することで完成させる。
+      classifyAllShell = true;
       hard_deny = [
         "$defaults"
         "Never read .env, .env.local, or any other .env.* files in any directory"
