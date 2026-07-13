@@ -11,6 +11,8 @@ interface HookData {
     | "elicitation_dialog"
     | "elicitation_complete"
     | "elicitation_response"
+    | "agent_needs_input"
+    | "agent_completed"
   message?: string
 }
 

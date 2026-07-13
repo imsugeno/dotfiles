@@ -166,10 +166,18 @@ let
       # 受け取りの中間ターンでも通知が走り、マルチエージェント時の S/N 比が悪化していた。
       # `Notification` は Claude Code が能動的にユーザーへ知らせたい状況（メイン完了の
       # idle_prompt、権限要求の permission_prompt、認証成功、MCP elicitation 等）でのみ
-      # 発火する。サブエージェント完了は `SubagentStop` 側に振り分けられるため、
-      # `Notification` のみ登録すれば望ましいタイミングだけ通知を受け取れる。
+      # 発火するため、旧来は `matcher = ""` で全種別を受け取っても S/N は保てた。
+      #
+      # v2.1.198 でサブエージェントが背景実行デフォルトとなり、同時に `Notification` に
+      # `agent_needs_input`（人の介入要求）と `agent_completed`（サブエージェント完了）が
+      # 追加された。CLAUDE_CODE_FORK_SUBAGENT=1 + AGENT_TEAMS の並列度が高い構成では
+      # `agent_completed` が完了ごとに大量発火し、旧「Stop 抑止で S/N を保つ」意図が
+      # 破壊される。`matcher` に受け取りたい種別だけを `|` 区切りで列挙し、
+      # `agent_completed` を除外して意図を維持する。人の介入を促す `agent_needs_input` は残す。
+      # matcher は英数字・`_`・`-`・`|`・`,` のみを含む場合は exact string の集合として
+      # 評価される（正規表現ではない）ため、`|` 列挙で確定的に絞れる。
       Notification = [{
-        matcher = "";
+        matcher = "permission_prompt|idle_prompt|auth_success|elicitation_dialog|elicitation_complete|elicitation_response|agent_needs_input";
         hooks = [{
           type = "command";
           command = "${dotfilesPath}/home-manager/programs/claude/hooks/notify.ts";
