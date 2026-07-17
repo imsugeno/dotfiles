@@ -86,6 +86,18 @@ let
     # （`bash -lc "sudo ..."` 等）で抜けうるため、同じ defense-in-depth 思想を意図ベースで二重化する。
     # `$defaults` で組み込みルールを継承する。
     autoMode = {
+      # v2.1.193 で追加。auto mode 中に narrow な Bash / PowerShell allow ルール
+      # （`Bash(sed *)` / `Bash(chmod *)` 等）を分類器の前段で通さず、全ての shell
+      # コマンドを classifier に評価させる。auto mode のデフォルトは `Bash(*)` 等の
+      # 広い allow のみを停止し、narrow allow は素通しするため、`Bash(sed *)` は
+      # `sed -i` で任意ファイルを書き換えうるし `Bash(chmod *)` は `chmod +s` で
+      # setuid を付与しうる。`permissions.deny` は構文一致、`hard_deny` はシェル
+      # ラッパー経由の回避を意図ベースで拒否するのに対し、`classifyAllShell` は
+      # narrow allow の「意図しない引数」の抜け道を classifier 評価で塞ぐ第三の
+      # 層。トレードオフとして classifier 呼び出しが増えるが、xhigh + 1h キャッシュ
+      # の構成では受容範囲、かつ予測可能性の方が価値が高い。auto mode 外では
+      # 通常通り allow が働くため運用摩擦は限定的。
+      classifyAllShell = true;
       hard_deny = [
         "$defaults"
         "Never read .env, .env.local, or any other .env.* files in any directory"
