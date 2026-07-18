@@ -17,13 +17,16 @@ let
     # サイレントな挙動変化を避けるため旧挙動を明示固定する。
     respondToBashCommands = false;
     # v2.1.111 で Opus 4.7 向けに追加された `xhigh`（`high` と `max` の中間）。
-    # alwaysThinkingEnabled = true と合わせて、Opus 4.7 の推論深度を引き上げる。
+    # v2.1.154 で Opus 4.8 がデフォルトモデルになった後も同レベル指定は有効で、
+    # Opus 4.8 の推奨デフォルト `high` を一段引き上げる位置づけ。
+    # alwaysThinkingEnabled = true と合わせて推論深度を最大化する。
     effortLevel = "xhigh";
     env = {
       # v2.1.36+ の Fast Mode（Opus 高速構成）を完全に無効化する。`/fast` コマンドも
-      # 「disabled by your organization」相当で弾かれる。Fast Mode は $30/$150 per MTok と
-      # 標準 Opus の倍以上のコストで、かつ additional usage に直接請求される（プラン枠を
-      # 消費しない）ため、誤って /fast を入力した際の事故的な高コスト発生を未然に防ぐ。
+      # 「disabled by your organization」相当で弾かれる。v2.1.150 でデフォルトが Opus 4.8 に
+      # 切り替わり、4.8 fast は $10/$50 per MTok（標準の 2x で約 2.5x の速度）、4.7 / 4.6 は
+      # $30/$150 のまま。いずれにせよ additional usage に直接請求されプラン枠を消費しないため、
+      # 誤って /fast を入力した際の事故的な高コスト発生を未然に防ぐ。
       CLAUDE_CODE_DISABLE_FAST_MODE = "1";
       CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS = "1";
       # v2.1.117 で外部ビルド向けに有効化。サブエージェントを fork して走らせることで
@@ -68,6 +71,14 @@ let
       "typescript-lsp@claude-plugins-official" = true;
       "pyright-lsp@claude-plugins-official" = true;
       "gopls-lsp@claude-plugins-official" = true;
+      # v2.1.154 で公開された脆弱性レビュー plugin。各 Edit/Write 直後の高速パターンチェック、
+      # 各ターン終了時のモデルレビュー、commit / push 時の agentic deep review の三段で
+      # Claude 自身が書いた変更の脆弱性を検出・修正する。
+      # `permissions.deny` / `CLAUDE_CODE_SUBPROCESS_ENV_SCRUB` / `autoMode.hard_deny` で
+      # secrets 露出・危険コマンド層の防衛を組んでいるのに対し、コード品質側
+      # （SQLi / XSS / 認証バグ等）のレイヤを追加する defense-in-depth。
+      # プロジェクト固有ルールは `.claude/claude-security-guidance.md` に置く。
+      "security-guidance@claude-plugins-official" = true;
     };
     # v2.1.133 で追加・v2.1.143 でデフォルトが "head" → "fresh" (origin/<default>) に変更された。
     # Agent tool の `isolation: "worktree"` / `--worktree` / `EnterWorktree` 起動時、
