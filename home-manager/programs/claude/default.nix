@@ -30,6 +30,15 @@ let
       # CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS = "1" と組み合わせた際に真の並列実行となり、
       # 複数エージェント同時起動時のレイテンシとオーバーヘッドを削減する。
       CLAUDE_CODE_FORK_SUBAGENT = "1";
+      # v2.1.219 で「デフォルトを 1 → 3 に変更」とアナウンスされた、ネストサブエージェントの
+      # 最大深さ。CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS + FORK_SUBAGENT を前提にした運用では
+      # Workflow の pipeline / parallel の各ステージから更に agent() を呼ぶ、adversarial
+      # verify を N 並列で回す等の入れ子が日常的に発生し、depth 3 が実効的な下限となる。
+      # 直前バージョンのデフォルトは 1 であり、単発の default 変更で並列ワークフローが
+      # サイレントに degradation する挙動が実証されている。`worktree.baseRef = "head"` や
+      # `respondToBashCommands = false` と同じ「デフォルトのサイレント変化を明示ピンで塞ぐ」
+      # defense-in-depth。現行デフォルトと同値だが、AGENT_TEAMS 系運用の必要下限として固定する。
+      CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH = "3";
       # v2.1.83 で追加。Bash / hooks / MCP stdio サーバーのサブプロセス env から
       # Anthropic・クラウドプロバイダーのクレデンシャルを剥奪する。deny ルールで
       # 守っている .env / ~/.ssh / ~/.aws / secrets.jsonnet と同じ防御思想の defense-in-depth。
