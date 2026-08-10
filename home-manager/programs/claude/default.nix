@@ -30,6 +30,17 @@ let
       # CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS = "1" と組み合わせた際に真の並列実行となり、
       # 複数エージェント同時起動時のレイテンシとオーバーヘッドを削減する。
       CLAUDE_CODE_FORK_SUBAGENT = "1";
+      # v2.1.219 でネストサブエージェントのデフォルト depth が 1 → 3 に引き上げられた
+      # （リリースノート: "Subagents can now spawn nested subagents up to depth 3 by default
+      # (was 1); set CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH=1 to disable nesting"）。
+      # AGENT_TEAMS / FORK_SUBAGENT は「main が並列に多数のサブエージェントを起こす」
+      # 水平方向の並列性を狙って有効化しており、サブエージェントが更にサブエージェントを
+      # 起こす垂直方向のネストは想定していない。depth = 3 だと Opus 4.7 + xhigh + 1h キャッシュの
+      # 重い構成でネスト分の推論コスト・レイテンシが不透明に積み上がる。
+      # respondToBashCommands / worktree.baseRef と同じく、サイレントな挙動変化を避けるため
+      # 旧デフォルト（ネスト無効 = depth 1）を明示固定する。並列サブエージェント自体は
+      # depth 1 でも引き続き機能する（siblings として起動されるため）。
+      CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH = "1";
       # v2.1.83 で追加。Bash / hooks / MCP stdio サーバーのサブプロセス env から
       # Anthropic・クラウドプロバイダーのクレデンシャルを剥奪する。deny ルールで
       # 守っている .env / ~/.ssh / ~/.aws / secrets.jsonnet と同じ防御思想の defense-in-depth。
