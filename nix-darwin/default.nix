@@ -84,6 +84,7 @@
 
   environment.systemPackages = [
     pkgs.awscli2
+    pkgs.stripe-cli
   ];
 
   # ─── Homebrew ───
@@ -152,6 +153,8 @@
       "slack"
       "spotify"
       "visual-studio-code"
+      "kubectl"
+      "kind"
     ];
   };
 }
