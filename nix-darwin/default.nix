@@ -56,7 +56,7 @@
         "/System/Applications/Notes.app"
         "/System/Applications/System Settings.app"
         "/Applications/iTerm.app"
-        "/Applications/Arc.app"
+        "/Applications/Dia.app"
         "/Applications/Claude.app"
       ];
     };
@@ -129,7 +129,6 @@
       "1password"
       "arto-app/tap/arto"
       "aqua-voice"
-      "arc"
       "bettertouchtool"
       "brave-browser"
       "chromedriver"
