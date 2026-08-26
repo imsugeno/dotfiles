@@ -125,6 +125,8 @@
       "zsh-autosuggestions"
       "zsh-syntax-highlighting"
       "gemini-cli"
+      "kubectl"
+      "kind"
     ];
     casks = [
       "1password"
@@ -153,8 +155,6 @@
       "slack"
       "spotify"
       "visual-studio-code"
-      "kubectl"
-      "kind"
     ];
   };
 }
