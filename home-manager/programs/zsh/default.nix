@@ -22,6 +22,7 @@
       ccr = "claude --effort max --resume";
       ccp = "claude --effort max -p";
       cr = "coderabbit";
+      diff = "icdiff"
     };
 
     # Initialize with .zshrc content

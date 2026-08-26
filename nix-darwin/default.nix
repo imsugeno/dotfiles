@@ -110,6 +110,7 @@
       "go-jsonnet"
       "golangci-lint"
       "graphviz"
+      "icdiff"
       "jq"
       "mise"
       "ni"
