@@ -12,6 +12,7 @@
 
   # Import program-specific configurations
   imports = [
+    ./programs/codex/default.nix
     ./programs/git/default.nix
     ./programs/claude/default.nix
     ./programs/vscode/default.nix
