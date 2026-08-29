@@ -44,5 +44,6 @@ source $(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 source $(brew --prefix)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 # kubectl completion
-source <(kubectl completion zsh)  # 現在のzshシェルにコマンド補完を設定します
-echo "[[ $commands[kubectl] ]] && source <(kubectl completion zsh)" >> ~/.zshrc # zshシェルでのコマンド補完を永続化するために.zshrcに追記します。
+if (( $+commands[kubectl] )); then
+  source <(kubectl completion zsh)
+fi
