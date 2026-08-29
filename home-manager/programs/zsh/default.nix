@@ -18,11 +18,11 @@
       cafe = "caffeinate -dimsu";
       gpp = "git pull origin main && git push origin HEAD";
       restart = "exec $SHELL -l";
-      cc = "claude --effort max";
-      ccr = "claude --effort max --resume";
-      ccp = "claude --effort max -p";
-      cr = "coderabbit";
+      cc = "claude";
+      cr = "claude --resume";
+      cp = "claude -p";
       diff = "icdiff";
+      k = "kubectl"
     };
 
     # Initialize with .zshrc content
