@@ -22,7 +22,7 @@
       cr = "claude --resume";
       cp = "claude -p";
       diff = "icdiff";
-      k = "kubectl"
+      k = "kubectl";
     };
 
     # Initialize with .zshrc content
