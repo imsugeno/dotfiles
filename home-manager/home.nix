@@ -12,7 +12,6 @@
 
   # Import program-specific configurations
   imports = [
-    ./programs/codex/default.nix
     ./programs/git/default.nix
     ./programs/claude/default.nix
     ./programs/vscode/default.nix
@@ -21,9 +20,7 @@
     ./programs/mcp/default.nix
     ./programs/zsh/default.nix
     ./programs/deno/default.nix
-    ./programs/serena/default.nix
     ./programs/starship/default.nix
     ./programs/go/default.nix
-    ./programs/mise/default.nix
   ];
 }

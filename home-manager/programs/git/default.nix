@@ -52,7 +52,6 @@
       "node_modules/"
       ".env"
       ".env.local"
-      ".serena"
       ".claude/settings.local.json"
     ];
   };

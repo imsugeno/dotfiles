@@ -30,8 +30,6 @@ home-manager/
     git/                     # Git 設定
     karabiner/               # Karabiner-Elements 設定
     mcp/                     # MCP サーバー設定（jsonnet → JSON 生成）
-    mise/                    # mise ランタイム管理（Python, Go 等）
-    serena/                  # Serena AI コーディングアシスタント設定
     zsh/                     # Zsh 設定
 ```
 
@@ -53,7 +51,6 @@ nix関係のコマンドはLint等で使うに留め、ファイル操作等、�
 - **設定ファイルの管理方式**: home-manager の `home.file` または `xdg.configFile` で `mkOutOfStoreSymlink` を使い、リポジトリ内のファイルへ symlink を張る
 - **新しいプログラム設定を追加する場合**: `home-manager/programs/<name>/default.nix` を作成し、`home-manager/home.nix` の imports に追加する
 - **Homebrew パッケージ**: `nix-darwin/default.nix` の `homebrew.brews` / `homebrew.casks` にアルファベット順で追加する
-- **シークレット**: `secrets.jsonnet` は `.gitignore` で除外。`secrets.jsonnet.example` をテンプレートとして管理する
-- **Serena プロジェクト設定**: `~/.config/serena/projects.nix` は Git 管理外。`projects.nix.example` をテンプレートとして管理する
+- **Codex設定**: `~/.codex/config.toml` とランタイムデータはdotfilesでは管理しない
 - **新規ファイル追加時**: Nix Flakes は Git 追跡ファイルのみ参照するため、`git add` を忘れないこと
 - **Determinate Nix**: `nix.enable = false` を設定して競合を回避している

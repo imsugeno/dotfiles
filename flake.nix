@@ -17,43 +17,28 @@
   let
     system = "aarch64-darwin";
 
-    # マシン設定
-    machines = {
-      imsugeno = {
-        username = "elmo";
-        hostname = "imsugeno";
-        ghqRoot = "/Users/elmo/repos";
-        dotfilesPath = "/Users/elmo/repos/github.com/imsugeno/dotfiles";
-        gitConfig = {
-          userName = "imsugeno";
-          userEmail = "g.tokyo.kazusa@gmail.com";
-        };
-        # serenaProjects は default.nix で ~/.config/serena/projects.nix から読み込む
-      };
-      kazusa-sugeno = {
-        username = "canly";
-        hostname = "kazusa-sugeno";
-        ghqRoot = "/Users/canly/src";
-        dotfilesPath = "/Users/canly/src/github.com/imsugeno/dotfiles";
-        gitConfig = {
-          userName = "imsugeno";
-          userEmail = "g.tokyo.kazusa@gmail.com";
-        };
-        # serenaProjects は default.nix で ~/.config/serena/projects.nix から読み込む
-      };
+    getEnv = name:
+      let value = builtins.getEnv name;
+      in if value == ""
+         then throw "${name} is required. Use make switch/check or pass it with --impure."
+         else value;
+
+    username = getEnv "DOTFILES_USER";
+    homeDirectory = "/Users/${username}";
+    dotfilesPath = "${homeDirectory}/repos/github.com/imsugeno/dotfiles";
+    gitConfig = {
+      userName = "imsugeno";
+      userEmail = "g.tokyo.kazusa@gmail.com";
     };
 
     # darwinConfiguration生成
-    mkDarwinConfig = name: { username, hostname, ghqRoot, dotfilesPath, gitConfig, ... }:
-      let
-        homeDirectory = "/Users/${username}";
-      in
+    mkDarwinConfig =
       nix-darwin.lib.darwinSystem {
         inherit system;
 
         # nix-darwin モジュールで利用可能
         specialArgs = {
-          inherit username hostname;
+          inherit username;
         };
 
         modules = [
@@ -67,7 +52,7 @@
 
             # home-manager モジュールで利用可能
             home-manager.extraSpecialArgs = {
-              inherit username homeDirectory ghqRoot dotfilesPath gitConfig hostname;
+              inherit username homeDirectory dotfilesPath gitConfig;
             };
 
             home-manager.users."${username}" = import ./home-manager/home.nix;
@@ -76,6 +61,6 @@
       };
   in
   {
-    darwinConfigurations = builtins.mapAttrs mkDarwinConfig machines;
+    darwinConfigurations.current = mkDarwinConfig;
   };
 }

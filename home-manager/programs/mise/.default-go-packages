@@ -1,4 +1,0 @@
-golang.org/x/tools/gopls@latest
-golang.org/x/tools/cmd/goimports@latest
-honnef.co/go/tools/cmd/staticcheck@latest
-

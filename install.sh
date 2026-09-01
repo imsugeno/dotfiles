@@ -56,23 +56,22 @@ else
   info "Nix: OK"
 fi
 
-# ─── ホスト名の検出 ───
-
-HOSTNAME=$(scutil --get LocalHostName)
-info "検出されたホスト名: ${HOSTNAME}"
-
 # ─── リポジトリのクローン ───
 
 # スクリプトの実行場所からリポジトリパスを推定
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+EXPECTED_DOTFILES_DIR="$HOME/repos/github.com/imsugeno/dotfiles"
 
 # 既に dotfiles ディレクトリ内で実行されている場合はそれを使用
 if [[ -f "${SCRIPT_DIR}/flake.nix" ]]; then
   DOTFILES_DIR="${SCRIPT_DIR}"
+  if [[ "${DOTFILES_DIR}" != "${EXPECTED_DOTFILES_DIR}" ]]; then
+    error "dotfiles はghq管理下の ${EXPECTED_DOTFILES_DIR} に配置してください"
+    exit 1
+  fi
   info "既存の dotfiles ディレクトリを使用: ${DOTFILES_DIR}"
 else
-  # デフォルトのクローン先（ユーザーのホームディレクトリ内）
-  DOTFILES_DIR="$HOME/repos/github.com/imsugeno/dotfiles"
+  DOTFILES_DIR="${EXPECTED_DOTFILES_DIR}"
 
   if [[ ! -d "${DOTFILES_DIR}" ]]; then
     info "dotfiles をクローンしています..."
@@ -84,24 +83,6 @@ else
 fi
 
 cd "${DOTFILES_DIR}"
-
-# ─── MCP シークレット ───
-
-MCP_SECRETS="home-manager/programs/mcp/secrets.jsonnet"
-if [[ ! -f "${MCP_SECRETS}" ]]; then
-  info "MCP シークレットのテンプレートをコピーしています..."
-  cp "${MCP_SECRETS}.example" "${MCP_SECRETS}"
-  warn "MCP シークレットを編集してください: ${DOTFILES_DIR}/${MCP_SECRETS}"
-fi
-
-# ─── Serena プロジェクト設定 ───
-
-SERENA_PROJECTS="home-manager/programs/serena/projects.nix"
-if [[ ! -f "${SERENA_PROJECTS}" ]]; then
-  info "Serena プロジェクト設定のテンプレートをコピーしています..."
-  cp "${SERENA_PROJECTS}.example" "${SERENA_PROJECTS}"
-  warn "必要に応じて編集してください: ${DOTFILES_DIR}/${SERENA_PROJECTS}"
-fi
 
 # ─── MCP 設定の初期ダミーファイル ───
 
@@ -115,31 +96,15 @@ done
 
 # ─── nix-darwin の初回セットアップ ───
 
-info "nix-darwin を適用しています (ホスト名: ${HOSTNAME})..."
+info "nix-darwin を適用しています (ユーザー: $(id -un))..."
+DOTFILES_USER="$(id -un)" nix run nix-darwin -- switch --impure --flake ".#current"
 
-# ホスト名が flake.nix の machines に定義されているか確認
-if nix flake show 2>&1 | grep -q "darwinConfigurations.${HOSTNAME}"; then
-  nix run nix-darwin -- switch --flake ".#${HOSTNAME}"
-else
-  error "ホスト名 '${HOSTNAME}' が flake.nix に定義されていません"
-  info "flake.nix の machines オブジェクトに以下を追加してください:"
-  echo ""
-  echo "  ${HOSTNAME} = {"
-  echo "    username = \"$(whoami)\";"
-  echo "    hostname = \"${HOSTNAME}\";"
-  echo "    dotfilesPath = \"${DOTFILES_DIR}\";"
-  echo "    gitConfig = {"
-  echo "      userName = \"your-git-username\";"
-  echo "      userEmail = \"your@email.com\";"
-  echo "    };"
-  echo "  };"
-  exit 1
-fi
+# Homebrew経由で必要なコマンドが入った後にClaude CodeとMCP設定を適用する
+make claude-code mcp
 
 info ""
 info "セットアップが完了しました！"
 info ""
 info "次のステップ:"
 info "  1. 新しいターミナルを開く"
-info "  2. MCP シークレットを編集: vi ${DOTFILES_DIR}/${MCP_SECRETS}"
-info "  3. MCP 設定をビルド: cd ${DOTFILES_DIR} && make mcp"
+info "  2. 各アプリへログインし、必要なmacOS権限を許可する"

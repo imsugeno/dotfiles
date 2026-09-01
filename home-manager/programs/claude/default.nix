@@ -118,7 +118,6 @@ let
         "Bash(git *)"
         "Bash(make *)"
         "Bash(nix *)"
-        "Bash(mise *)"
         "Bash(brew *)"
         "Bash(jq *)"
         "Bash(jsonnet *)"
@@ -145,10 +144,8 @@ let
         "Bash(sed *)"
         "Bash(awk *)"
         # MCP — 現在設定中のサーバーを全許可
-        "mcp__devin"
         "mcp__awslabs_aws-documentation-mcp-server"
         "mcp__deepwiki"
-        "mcp__serena"
       ];
       deny = [
         "Bash(git push*)"

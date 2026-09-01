@@ -1,10 +1,11 @@
-.PHONY: help all switch update clean gc rebuild check mcp clean-mcp claude-code add-skill
+.PHONY: help all prepare switch update clean gc rebuild check mcp clean-mcp claude-code add-skill
 
-# ホスト名の自動検出
-HOSTNAME := $(shell scutil --get LocalHostName)
+# OSユーザー名をNix Flakeへ渡す（sudo後のrootを拾わないよう事前に取得）
+DOTFILES_USER := $(shell id -un)
+EXPECTED_REPO := $(HOME)/repos/github.com/imsugeno/dotfiles
 
-# Default target: MCP設定をビルドしてからnix-darwinを適用
-all: mcp switch
+# Default target: nix-darwinとMCP設定を適用
+all: switch
 
 # Help
 help:
@@ -23,19 +24,27 @@ help:
 	@echo "  make gc       - Garbage collection (clean + collect)"
 	@echo ""
 	@echo "First time setup:"
-	@echo "  1. Copy secrets: cp home-manager/programs/mcp/secrets.jsonnet.example home-manager/programs/mcp/secrets.jsonnet"
-	@echo "  2. Edit secrets: vi home-manager/programs/mcp/secrets.jsonnet"
-	@echo "  3. Run 'make' from this directory"
+	@echo "  Run the install command documented in README.md"
+
+# 初回評価用のMCPダミーファイルを用意し、固定したghq配下での実行を保証
+prepare:
+	@test "$$(git rev-parse --show-toplevel)" = "$(EXPECTED_REPO)" || \
+		(echo "dotfiles must be located at $(EXPECTED_REPO)" >&2; exit 1)
+	@mkdir -p home-manager/programs/mcp
+	@test -f home-manager/programs/mcp/.mcp-general.json || echo '{}' > home-manager/programs/mcp/.mcp-general.json
+	@test -f home-manager/programs/mcp/.mcp-claude-code.json || echo '{}' > home-manager/programs/mcp/.mcp-claude-code.json
 
 # Apply configuration
-switch: claude-code
+switch: prepare claude-code
 	@# sudo で darwin-rebuild を実行する際、root の git が本リポジトリを信頼できるようにする
 	@REPO_PATH="$$(pwd)"; \
 	if ! sudo git config --global --get-all safe.directory 2>/dev/null | grep -qFx "$$REPO_PATH"; then \
 		echo "Adding $$REPO_PATH to root's git safe.directory..."; \
 		sudo git config --global --add safe.directory "$$REPO_PATH"; \
 	fi
-	sudo darwin-rebuild switch --flake ".#$(HOSTNAME)"
+	sudo env DOTFILES_USER="$(DOTFILES_USER)" \
+		darwin-rebuild switch --impure --flake ".#current"
+	$(MAKE) mcp
 
 # Install/update Claude Code native binary from GitHub Releases
 claude-code:
@@ -49,9 +58,14 @@ add-skill:
 
 # Build MCP server configurations
 mcp: clean-mcp
-	jsonnet --ext-str HOME="$$HOME" home-manager/programs/mcp/mcp-general.jsonnet > home-manager/programs/mcp/.mcp-general.json
-	jsonnet --ext-str HOME="$$HOME" home-manager/programs/mcp/mcp-claude-code.jsonnet > home-manager/programs/mcp/.mcp-claude-code.json
-	jq 'del(.mcpServers) + $$mcp[0]' ~/.config/claude/.claude.json --slurpfile mcp home-manager/programs/mcp/.mcp-claude-code.json > ~/.config/claude/.claude.json.tmp && mv ~/.config/claude/.claude.json.tmp ~/.config/claude/.claude.json
+	jsonnet home-manager/programs/mcp/mcp-general.jsonnet > home-manager/programs/mcp/.mcp-general.json
+	jsonnet home-manager/programs/mcp/mcp-claude-code.jsonnet > home-manager/programs/mcp/.mcp-claude-code.json
+	@CLAUDE_JSON="$$HOME/.config/claude/.claude.json"; \
+	mkdir -p "$$(dirname "$$CLAUDE_JSON")"; \
+	test -f "$$CLAUDE_JSON" || echo '{}' > "$$CLAUDE_JSON"; \
+	jq 'del(.mcpServers) + $$mcp[0]' "$$CLAUDE_JSON" \
+		--slurpfile mcp home-manager/programs/mcp/.mcp-claude-code.json \
+		> "$$CLAUDE_JSON.tmp" && mv "$$CLAUDE_JSON.tmp" "$$CLAUDE_JSON"
 
 clean-mcp:
 	rm -f home-manager/programs/mcp/.mcp-general.json
@@ -62,11 +76,11 @@ update:
 	nix flake update
 
 # Update and rebuild
-rebuild: update mcp switch
+rebuild: update switch
 
 # Check flake configuration
 check:
-	nix flake check
+	DOTFILES_USER="$(DOTFILES_USER)" nix flake check --impure
 
 # Clean old generations (keep last 5)
 clean:

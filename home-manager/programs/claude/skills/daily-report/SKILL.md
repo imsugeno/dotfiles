@@ -23,7 +23,7 @@ $ARGUMENTS
 - `~/.config/claude/projects/`
 
 **重要な注意点**:
-- **maxdepth を制限しない**: worktree 配下のセッションは深い階層に格納される（例: `-Users-canly-src-.../leretto-inc-canly-public-api-nexus-worktrees-feature-CPA-115/xxx.jsonl`）。`-maxdepth 4` のような制限を付けると取りこぼす。
+- **maxdepth を制限しない**: worktree 配下のセッションは深い階層に格納される。`-maxdepth 4` のような制限を付けると取りこぼす。
 - **ファイル mtime ではなく JSONL 内の `timestamp` でフィルタする**: `find -newer` はファイル修正時刻ベースなので、同じセッションファイルが複数日にまたがる場合や、別日の daily-report 自身によって touch された場合に誤判定する。JSONL の各レコードが持つ `timestamp` フィールド（ISO8601 UTC）が対象日で始まる行を1件でも含むファイルのみを対象にする。
 - **サブエージェントを除外**: `/subagents/` パスを含むファイルは親セッションの一部なので重複カウントしない。
 
@@ -32,10 +32,11 @@ $ARGUMENTS
 TARGET_DATE=${ARG:-$(date +%Y-%m-%d)}
 
 python3 - "$TARGET_DATE" <<'PY'
-import glob, json, sys
+import glob, json, os, sys
 target = sys.argv[1]
-paths = (glob.glob('/Users/canly/.claude/projects/**/*.jsonl', recursive=True)
-         + glob.glob('/Users/canly/.config/claude/projects/**/*.jsonl', recursive=True))
+home = os.path.expanduser('~')
+paths = (glob.glob(f'{home}/.claude/projects/**/*.jsonl', recursive=True)
+         + glob.glob(f'{home}/.config/claude/projects/**/*.jsonl', recursive=True))
 paths = [p for p in paths if '/subagents/' not in p]
 for p in paths:
     try:
@@ -56,7 +57,7 @@ PY
 **JST / UTC の取り扱い**: `timestamp` は UTC。JST の「今日」は UTC では前日 15:00〜当日 14:59 に該当する。厳密に JST ローカル日付で集計したい場合は、対象範囲を `${TARGET_DATE-1}T15:00:00Z` ~ `${TARGET_DATE}T14:59:59Z` に広げて再判定する。ゆるく UTC 日付で集計するだけでよければ上記のままで十分（今日のセッションが UTC 深夜に開始し翌日にまたがる場合のみ影響）。
 
 各セッションファイルから `role == "user"` のメッセージと `role == "assistant"` のテキストを抽出し、以下を特定する:
-- プロジェクト名（パスの `-Users-canly-src-github-com-<org>-<repo>` 部分から推定、worktree 配下なら `-worktrees-<branch>` も含める）
+- プロジェクト名（パスの `-Users-<user>-repos-github-com-<org>-<repo>` 部分から推定、worktree 配下なら `-worktrees-<branch>` も含める）
 - 作業内容（ユーザー指示のうちスキル定義・`<scheduled-task>` 等の自動生成メッセージを除外した実入力）
 - 時間帯（`timestamp` の最初と最後）
 - セッション件数（日報の規模感把握用）
@@ -71,7 +72,7 @@ git -C <repo_path> log --all --format="%h %ai %s | %an" \
 ```
 
 **注意点**:
-- **worktree 配下も個別に走査する**: `canly-public-api-nexus.worktrees/feature/CPA-xxx/` などの別ブランチで作業した内容は親リポジトリの log には出ないことがある。`ls <repo>.worktrees/*/` と `ls <repo>.worktrees/*/*/` を再帰的に見て、`.git` (ファイル) を持つディレクトリを拾う。
+- **worktree 配下も個別に走査する**: `<repo>.worktrees/feature/<branch>/` などの別ブランチで作業した内容は親リポジトリの log には出ないことがある。`ls <repo>.worktrees/*/` と `ls <repo>.worktrees/*/*/` を再帰的に見て、`.git` (ファイル) を持つディレクトリを拾う。
 - **著者フィルタは使わない**: `claude/xxx` ブランチの Claude リモートエージェントによるコミット（Author: `Claude <noreply@anthropic.com>`）は自分の作業成果として扱いたいので、`--author` で絞らずに後段で判断する。
 - **未コミット変更も拾う**: `git status` と `git diff --stat` で作業中の変更を把握し、「明日以降やること」に反映する。
 
