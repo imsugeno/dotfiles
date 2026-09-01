@@ -42,8 +42,16 @@ switch: prepare claude-code
 		echo "Adding $$REPO_PATH to root's git safe.directory..."; \
 		sudo git config --global --add safe.directory "$$REPO_PATH"; \
 	fi
-	sudo env DOTFILES_USER="$(DOTFILES_USER)" \
-		darwin-rebuild switch --impure --flake ".#current"
+	@DARWIN_REBUILD="$$(command -v darwin-rebuild 2>/dev/null || true)"; \
+	if [ -n "$$DARWIN_REBUILD" ]; then \
+		sudo env DOTFILES_USER="$(DOTFILES_USER)" \
+			"$$DARWIN_REBUILD" switch --impure --flake ".#current"; \
+	else \
+		NIX_BIN="$$(command -v nix)"; \
+		echo "darwin-rebuild is not installed yet; bootstrapping with nix run..."; \
+		sudo env DOTFILES_USER="$(DOTFILES_USER)" \
+			"$$NIX_BIN" run nix-darwin -- switch --impure --flake ".#current"; \
+	fi
 	$(MAKE) mcp
 
 # Install/update Claude Code native binary from GitHub Releases

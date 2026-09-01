@@ -97,10 +97,8 @@ done
 # ─── nix-darwin の初回セットアップ ───
 
 info "nix-darwin を適用しています (ユーザー: $(id -un))..."
-DOTFILES_USER="$(id -un)" nix run nix-darwin -- switch --impure --flake ".#current"
-
-# Homebrew経由で必要なコマンドが入った後にClaude CodeとMCP設定を適用する
-make claude-code mcp
+# make switchが初回はsudo nix runへフォールバックし、2回目以降はdarwin-rebuildを使う
+make switch
 
 info ""
 info "セットアップが完了しました！"
