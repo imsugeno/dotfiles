@@ -133,7 +133,6 @@
       "arto-app/tap/arto"
       "aqua-voice"
       "bettertouchtool"
-      "chromedriver"
       "claude"
       "claude-code"
       "codex"
