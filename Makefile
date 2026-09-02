@@ -1,5 +1,9 @@
 .PHONY: help all prepare switch update clean gc rebuild check mcp clean-mcp claude-code add-skill
 
+# 初回インストール直後の親シェルにはbrew/NixのPATHが反映されないためMake側で補完
+export PATH := /opt/homebrew/bin:/nix/var/nix/profiles/default/bin:$(PATH)
+NIX_BIN := /nix/var/nix/profiles/default/bin/nix
+
 # OSユーザー名をNix Flakeへ渡す（sudo後のrootを拾わないよう事前に取得）
 DOTFILES_USER := $(shell id -un)
 EXPECTED_REPO := $(HOME)/repos/github.com/imsugeno/dotfiles
@@ -42,10 +46,10 @@ switch: prepare claude-code
 		echo "Adding $$REPO_PATH to root's git safe.directory..."; \
 		sudo git config --global --add safe.directory "$$REPO_PATH"; \
 	fi
-	@NIX_BIN="$$(command -v nix)"; \
-	echo "Applying nix-darwin with nix run..."; \
-	sudo env DOTFILES_USER="$(DOTFILES_USER)" \
-		"$$NIX_BIN" run nix-darwin -- switch --impure --flake ".#current"
+	@test -x "$(NIX_BIN)" || (echo "Nix not found: $(NIX_BIN)" >&2; exit 1)
+	@echo "Applying nix-darwin with nix run..."
+	/usr/bin/sudo /usr/bin/env DOTFILES_USER="$(DOTFILES_USER)" \
+		"$(NIX_BIN)" run nix-darwin -- switch --impure --flake ".#current"
 	$(MAKE) mcp
 
 # Install/update Claude Code native binary from GitHub Releases
@@ -75,14 +79,14 @@ clean-mcp:
 
 # Update flake inputs
 update:
-	nix flake update
+	"$(NIX_BIN)" flake update
 
 # Update and rebuild
 rebuild: update switch
 
 # Check flake configuration
 check:
-	DOTFILES_USER="$(DOTFILES_USER)" nix flake check --impure
+	DOTFILES_USER="$(DOTFILES_USER)" "$(NIX_BIN)" flake check --impure
 
 # Clean old generations (keep last 5)
 clean:
