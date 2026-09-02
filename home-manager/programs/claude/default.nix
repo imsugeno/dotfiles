@@ -213,6 +213,8 @@ in
     TMP="$TARGET.tmp"
     BASE=${lib.escapeShellArg (builtins.toJSON settings)}
 
+    $DRY_RUN_CMD mkdir -p "$HOME/.config/claude"
+
     # 旧 home.file 管理時の symlink が残っていれば外す
     if [ -L "$TARGET" ]; then
       $DRY_RUN_CMD rm "$TARGET"
