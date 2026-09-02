@@ -97,7 +97,7 @@ done
 # ─── nix-darwin の初回セットアップ ───
 
 info "nix-darwin を適用しています (ユーザー: $(id -un))..."
-# make switchが初回はsudo nix runへフォールバックし、2回目以降はdarwin-rebuildを使う
+# make switchは初回・2回目以降ともsudo nix run経由で適用する
 make switch
 
 info ""
