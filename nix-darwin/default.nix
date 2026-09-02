@@ -37,6 +37,9 @@
       "com.apple.Passwords" = {
         AutoFillPasswords = false;
       };
+      "com.googlecode.iterm2" = {
+        "Default Bookmark Guid" = "7812AA97-7135-40E5-BC7E-4B6741C2F02B";
+      };
     };
 
     finder = {
