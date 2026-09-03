@@ -19,8 +19,8 @@
       gpp = "git pull origin main && git push origin HEAD";
       restart = "exec $SHELL -l";
       cc = "claude";
-      cr = "claude --resume";
-      cp = "claude -p";
+      ccr = "claude --resume";
+      ccp = "claude -p";
       diff = "icdiff";
       k = "kubectl";
     };
