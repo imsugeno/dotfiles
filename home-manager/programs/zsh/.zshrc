@@ -26,6 +26,7 @@ export PATH="/opt/homebrew/opt/openjdk/bin:$PATH"
 # Rust toolchain (rustup is keg-only; toolchain shims live in ~/.cargo/bin)
 export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
 export PATH="$HOME/.cargo/bin:$PATH"
+export HOMEBREW_AUTO_UPDATE_SECS=259200
 
 # Enable colors for ls
 export CLICOLOR=1
