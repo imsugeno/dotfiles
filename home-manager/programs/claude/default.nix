@@ -45,6 +45,18 @@ let
       # 1h 書き込みは 5m の 2x コストだが、TTL 内に 2 回再ヒットすれば元が取れる前提で、
       # ユーザーが確認・思考する数分〜数十分のポーズを跨いでもキャッシュが生きる方が正味でメリットが大きい。
       ENABLE_PROMPT_CACHING_1H = "1";
+      # v2.1.217 で追加。サブエージェントがネストして更にサブエージェントを起動できる最大深度。
+      # 挙動の変遷:
+      #   - v2.1.216 以前: 事実上ネスト可（明示的な深度制御なし）
+      #   - v2.1.217: デフォルトでネスト無効化。この env var を設定して初めてネスト可
+      #   - v2.1.219: デフォルトが depth 3 に変更（ネスト再度有効化・ただし 3 層上限）
+      # `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS` + `CLAUDE_CODE_FORK_SUBAGENT` + xhigh + 1h キャッシュ
+      # の並列前提の構成では、reviewer 起点で verifier をファンアウトする等のネスト運用が実運用に
+      # 直結し、上位層のデフォルト値が silent に切り替わると同じ入力で得られるパイプライン形が
+      # 変わってしまう。`worktree.baseRef = "head"` や `respondToBashCommands = false` と同じく、
+      # 短期間に 2 度切り替わったデフォルトを明示固定して silent な挙動変化を防ぐ defense-in-depth。
+      # 値 "3" は v2.1.219 現行デフォルトに揃える（"1" でネスト無効、"2" で 1 段ネストまで）。
+      CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH = "3";
       # v2.1.143 で追加。GitHub から plugin を取得する際の clone を SSH ではなく HTTPS に固定する。
       # `enabledPlugins` で `claude-plugins-official` 配下の typescript-lsp / pyright-lsp / gopls-lsp を
       # 有効化しているため plugin 取得経路の信頼性は実害に直結する。SSH は ~/.ssh のキー設定・
