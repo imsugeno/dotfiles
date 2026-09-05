@@ -52,6 +52,16 @@ let
       # `DISABLE_UPDATES = "1"` で更新経路の真実の所在を Homebrew / GitHub Releases に固定したのと同じく、
       # plugin 取得経路も環境差の少ない HTTPS に固定し、運用の予測可能性を高める defense-in-depth。
       CLAUDE_CODE_PLUGIN_PREFER_HTTPS = "1";
+      # v2.1.216 で追加。サブエージェントが nested subagent を spawn できる深さの上限。
+      # v2.1.216 で「nested spawn を default 無効（depth 1）」に変更され、v2.1.219 で
+      # 「default depth 3」に戻された経緯があり、default 挙動が silent に振れた実績がある。
+      # CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS + CLAUDE_CODE_FORK_SUBAGENT で並列サブエージェント
+      # を主戦力にしている現構成では、nested spawn の depth が突然 1 に戻ると agent 設計
+      # （親 agent が子 agent を fan-out し、子がさらに孫を fork するパターン）が壊れて
+      # 沈黙する。`DISABLE_UPDATES = "1"` は claude update 経路を塞ぐが Homebrew 経由の
+      # 昇格は走るため、`worktree.baseRef = "head"` や `respondToBashCommands = false` と
+      # 同じ思想で、現時点の default 値 3 を明示固定して silent な挙動変化を塞ぐ。
+      CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH = "3";
     };
     # `includeCoAuthoredBy` は deprecated。attribution 設定で commit / pr 双方の帰属表示を空文字列化して抑止する。
     # v2.1.183 で追加された `sessionUrl` は web / Remote Control セッションからの commit / PR に
