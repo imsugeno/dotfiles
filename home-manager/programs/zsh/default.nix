@@ -1,6 +1,13 @@
 { config, pkgs, ... }:
 
 {
+  home.packages = [ pkgs.sourceHighlight ];
+
+  home.sessionVariables = {
+    LESS = "-R";
+    LESSOPEN = "| ${pkgs.sourceHighlight}/bin/src-hilite-lesspipe.sh %s";
+  };
+
   programs.zsh = {
     enable = true;
 
