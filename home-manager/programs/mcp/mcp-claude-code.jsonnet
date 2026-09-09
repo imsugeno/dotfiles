@@ -14,5 +14,17 @@
       type: 'http',
       url: 'https://mcp.deepwiki.com/mcp',
     },
+    'docker-mcp': {
+      command: 'docker',
+      args: ['mcp', 'gateway', 'run'],
+    },
+    drawio: {
+      command: 'npx',
+      args: ['-y', '@drawio/mcp@latest'],
+    },
+    notion: {
+      type: 'http',
+      url: 'https://mcp.notion.com/mcp',
+    },
   },
 }
