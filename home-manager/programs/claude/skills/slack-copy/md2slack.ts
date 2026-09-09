@@ -1,4 +1,4 @@
-#!/usr/bin/env -S deno run --allow-run=osascript
+#!/usr/bin/env -S deno run --allow-run=textutil,pbcopy
 
 import { marked } from "marked"
 
@@ -57,22 +57,29 @@ md = md.replace(/%%CODEBLOCK_(\d+)%%/g, (_match, i: string) => codeBlocks[parseI
 const html = await marked(md)
 
 // --- Copy as rich text to clipboard ---
-const hex = Array.from(new TextEncoder().encode(html))
-  .map((b) => b.toString(16).padStart(2, "0"))
-  .join("")
-
-const osascript = `set the clipboard to {text:" ", «class HTML»:«data HTML${hex}»}`
-
-const cmd = new Deno.Command("osascript", {
-  args: ["-e", osascript],
-  stdout: "piped",
-  stderr: "piped",
-})
-
-const result = await cmd.output()
-
-if (!result.success) {
-  const stderr = new TextDecoder().decode(result.stderr)
-  console.error(`Failed to copy to clipboard: ${stderr}`)
-  Deno.exit(1)
+// Slack reads the RTF flavor, not HTML. Convert HTML → RTF with textutil,
+// then hand the RTF to pbcopy so the clipboard carries a real RTF flavor.
+// The charset meta is required or textutil garbles non-ASCII text.
+async function run(command: string, args: string[], stdin: Uint8Array) {
+  const cmd = new Deno.Command(command, {
+    args,
+    stdin: "piped",
+    stdout: "piped",
+    stderr: "piped",
+  })
+  const child = cmd.spawn()
+  const writer = child.stdin.getWriter()
+  await writer.write(stdin)
+  await writer.close()
+  const result = await child.output()
+  if (!result.success) {
+    const stderr = new TextDecoder().decode(result.stderr)
+    console.error(`${command} failed: ${stderr}`)
+    Deno.exit(1)
+  }
+  return result.stdout
 }
+
+const htmlBytes = new TextEncoder().encode(`<meta charset="utf-8">${html}`)
+const rtf = await run("textutil", ["-stdin", "-format", "html", "-convert", "rtf", "-stdout"], htmlBytes)
+await run("pbcopy", ["-Prefer", "rtf"], rtf)
