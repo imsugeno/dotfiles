@@ -88,16 +88,29 @@ let
     autoMode = {
       # v2.1.193 で追加。auto mode 中に narrow な Bash / PowerShell allow ルール
       # （`Bash(sed *)` / `Bash(chmod *)` 等）を分類器の前段で通さず、全ての shell
-      # コマンドを classifier に評価させる。auto mode のデフォルトは `Bash(*)` 等の
-      # 広い allow のみを停止し、narrow allow は素通しするため、`Bash(sed *)` は
+      # コマンドを classifier に評価させる。デフォルトの停止対象は `Bash(*)` 等の
+      # 広い allow と、インタプリタ・シェル・`eval` / `exec` / `env` / `xargs` /
+      # `sudo` を指す narrow allow に限られる。それ以外は素通しするため `Bash(sed *)` は
       # `sed -i` で任意ファイルを書き換えうるし `Bash(chmod *)` は `chmod +s` で
       # setuid を付与しうる。`permissions.deny` は構文一致、`hard_deny` はシェル
       # ラッパー経由の回避を意図ベースで拒否するのに対し、`classifyAllShell` は
       # narrow allow の「意図しない引数」の抜け道を classifier 評価で塞ぐ第三の
       # 層。トレードオフとして classifier 呼び出しが増えるが、xhigh + 1h キャッシュ
-      # の構成では受容範囲、かつ予測可能性の方が価値が高い。auto mode 外では
-      # 通常通り allow が働くため運用摩擦は限定的。
+      # の構成では受容範囲、かつ予測可能性の方が価値が高い。`defaultMode = "auto"`
+      # のため常に auto mode であり、Bash / PowerShell の allow ルールは常時停止する。
       classifyAllShell = true;
+      # classifyAllShell の代償として、読み取りだけのコマンドも毎回 classifier の
+      # 裁量になり、同じ形のコマンドが通る回と拒否される回が混在する。ここは
+      # classifier のプロンプトに載る自然言語ルールで、構文一致ではないため確定的な
+      # 素通しは得られないが、判定の基準を固定して揺れを減らす。
+      # 許可条件はコマンド名ではなく副作用の性質で書く。コマンド名を列挙すると
+      # classifyAllShell で塞いだ「許可したコマンドに意図しない引数が渡る」穴が
+      # 意図ベースで再び開くため。
+      allow = [
+        "$defaults"
+        "Shell commands whose only effect is observing state, no matter which command implements it"
+        "Writes and script execution whose effects stay inside the session scratchpad directory"
+      ];
       hard_deny = [
         "$defaults"
         "Never read .env, .env.local, or any other .env.* files in any directory"
