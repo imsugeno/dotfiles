@@ -124,5 +124,6 @@
         "repositories": true,
         "searchAndCompare": true,
         "launchpad": false
-    }
+    },
+    "diffEditor.renderSideBySideInlineBreakpoint": 1200
 }
