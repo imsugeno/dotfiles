@@ -22,6 +22,10 @@
       command: 'npx',
       args: ['-y', '@drawio/mcp@latest'],
     },
+    figma: {
+      type: 'http',
+      url: 'https://mcp.figma.com/mcp',
+    },
     notion: {
       type: 'http',
       url: 'https://mcp.notion.com/mcp',
