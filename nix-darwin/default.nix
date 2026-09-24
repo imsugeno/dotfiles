@@ -144,7 +144,6 @@
       "figma"
       "font-hack-nerd-font"
       "gitify"
-      "google-chrome"
       "iterm2"
       "karabiner-elements"
       "mac-mouse-fix"

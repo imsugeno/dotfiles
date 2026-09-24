@@ -33,7 +33,7 @@ let
       # v2.1.83 で追加。Bash / hooks / MCP stdio サーバーのサブプロセス env から
       # Anthropic・クラウドプロバイダーのクレデンシャルを剥奪する。deny ルールで
       # 守っている .env / ~/.ssh / ~/.aws / secrets.jsonnet と同じ防御思想の defense-in-depth。
-      CLAUDE_CODE_SUBPROCESS_ENV_SCRUB = "1";
+      # CLAUDE_CODE_SUBPROCESS_ENV_SCRUB = "1"; plannotatorでエラーになるので無効化
       # v2.1.118 で追加。`DISABLE_AUTOUPDATER` より厳格で `claude update` も含む全更新経路を遮断する。
       # claude-code は scripts/install-claude-code.sh で GitHub Releases から `~/.local/bin/claude` に
       # 配置・更新しているため、内部 autoupdater が走ると dotfiles 管理外の `~/.claude` 配下に

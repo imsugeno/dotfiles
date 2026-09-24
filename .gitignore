@@ -4,3 +4,7 @@ home-manager/programs/mcp/.mcp-claude-code.json
 
 # Deno generated files
 deno.lock
+
+# Claude skills written by external tools (skills/ is symlinked from ~/.config/claude/skills)
+home-manager/programs/claude/skills/synced/
+home-manager/programs/claude/skills/plannotator*/
