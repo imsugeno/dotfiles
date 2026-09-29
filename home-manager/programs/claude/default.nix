@@ -116,7 +116,7 @@ let
         "Never read .env, .env.local, or any other .env.* files in any directory"
         "Never read files under ~/.ssh, ~/.aws, or any secrets.jsonnet file"
         "Never run sudo or su commands, even via shell wrappers, subshells, or pipes"
-        "Never run git push — the user pushes manually"
+        "Never force push (--force, -f, --force-with-lease, +refspec), and never git push to the remote's default branch or to base/environment branches such as main, master, develop, staging, production, or release/*, even via shell wrappers. Pushing feature branches is allowed"
       ];
     };
     permissions = {
@@ -161,7 +161,6 @@ let
         "mcp__deepwiki"
       ];
       deny = [
-        "Bash(git push*)"
         "Bash(sudo *)"
         "Bash(su *)"
         "Read(.env)"
@@ -191,6 +190,16 @@ let
         hooks = [{
           type = "command";
           command = "${dotfilesPath}/home-manager/programs/claude/hooks/notify.ts";
+        }];
+      }];
+      # force push と保護ブランチ宛ての push だけを止める。permissions.deny の構文一致では
+      # 引数なしの `git push`（main 上での実行）や `HEAD:main` の push 先を判定できないため、
+      # フック内で refspec・現在ブランチ・upstream・origin/HEAD を解決して判定する。
+      PreToolUse = [{
+        matcher = "Bash";
+        hooks = [{
+          type = "command";
+          command = "${dotfilesPath}/home-manager/programs/claude/hooks/git-push-guard.ts";
         }];
       }];
       PostToolUse = [{

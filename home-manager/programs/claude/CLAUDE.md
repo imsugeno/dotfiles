@@ -1,7 +1,7 @@
 ## 基本ガイドライン
 
 日本語で応答してください
-git pushはdenyしています。実行せずユーザー実行を促してください。
+force push と、ベースブランチ・環境ブランチ（main, develop, staging, production, release/* 等）への git push は deny しています。これらは実行せずユーザー実行を促してください。feature ブランチへの push は実行してよい。
 起動時に環境変数 `CLAUDE_CODE_ENTRYPOINT` で実行環境を判定する。`cli` は CLI（確認済み）、`local-agent` は Claude Desktop アプリ（公式ドキュメント未記載・実地未確認）。それ以外の値は CLI 扱いとする。
 
 ## ドキュメンテーションガイドライン
