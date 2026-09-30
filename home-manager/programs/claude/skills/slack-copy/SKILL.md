@@ -41,11 +41,7 @@ Claude Codeへの指示を実行し、その結果をSlack に貼り付け可能
 
 スクリプトは内部で `osascript` を使ってクリップボードへ書き込むため、サンドボックス下では失敗する。`md2slack.ts` を実行する Bash 呼び出しは `dangerouslyDisableSandbox: true` を指定してサンドボックスを無効化して実行する。
 
-```bash
-echo "<Markdownテキスト>" | <このスキルのベースディレクトリ>/md2slack.ts
-```
-
-**重要**: echo で Markdown テキストを渡す際は、特殊文字のエスケープを避けるためヒアドキュメントを使うこと:
+Markdown テキストはヒアドキュメントで渡す。`echo` で渡すと引用符・`$`・バッククォートがシェルに解釈されて内容が壊れる。
 
 ```bash
 <このスキルのベースディレクトリ>/md2slack.ts <<'EOF'
