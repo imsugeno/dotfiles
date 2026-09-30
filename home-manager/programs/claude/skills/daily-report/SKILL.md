@@ -28,11 +28,12 @@ $ARGUMENTS
 - **サブエージェントを除外**: `/subagents/` パスを含むファイルは親セッションの一部なので重複カウントしない。
 
 ```bash
-# 対象日 (YYYY-MM-DD、JST ローカル日付) を TARGET_DATE に設定
-TARGET_DATE=${ARG:-$(date +%Y-%m-%d)}
+# 対象日 (YYYY-MM-DD、ローカル日付)。引数で指定があればその日付、なければ本日
+TARGET_DATE=$(date +%Y-%m-%d)
 
 python3 - "$TARGET_DATE" <<'PY'
 import glob, json, os, sys
+from datetime import datetime
 target = sys.argv[1]
 home = os.path.expanduser('~')
 paths = (glob.glob(f'{home}/.claude/projects/**/*.jsonl', recursive=True)
@@ -43,9 +44,9 @@ for p in paths:
         with open(p) as f:
             for line in f:
                 try:
-                    d = json.loads(line)
-                    # timestamp は UTC。JST日報の場合は target 前日 15:00Z〜当日 14:59Z も含めたいなら調整
-                    if d.get('timestamp', '').startswith(target):
+                    ts = json.loads(line).get('timestamp')
+                    # timestamp は UTC。ローカル日付に変換してから比較する
+                    if ts and datetime.fromisoformat(ts.replace('Z', '+00:00')).astimezone().strftime('%Y-%m-%d') == target:
                         print(p); break
                 except Exception:
                     pass
@@ -53,8 +54,6 @@ for p in paths:
         pass
 PY
 ```
-
-**JST / UTC の取り扱い**: `timestamp` は UTC。JST の「今日」は UTC では前日 15:00〜当日 14:59 に該当する。厳密に JST ローカル日付で集計したい場合は、対象範囲を `${TARGET_DATE-1}T15:00:00Z` ~ `${TARGET_DATE}T14:59:59Z` に広げて再判定する。ゆるく UTC 日付で集計するだけでよければ上記のままで十分（今日のセッションが UTC 深夜に開始し翌日にまたがる場合のみ影響）。
 
 各セッションファイルから `role == "user"` のメッセージと `role == "assistant"` のテキストを抽出し、以下を特定する:
 - プロジェクト名（パスの `-Users-<user>-repos-github-com-<org>-<repo>` 部分から推定、worktree 配下なら `-worktrees-<branch>` も含める）
