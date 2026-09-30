@@ -30,5 +30,9 @@
       type: 'http',
       url: 'https://mcp.notion.com/mcp',
     },
+    playwright: {
+      command: 'npx',
+      args: ['@playwright/mcp@latest'],
+    },
   },
 }
