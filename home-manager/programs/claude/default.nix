@@ -52,6 +52,16 @@ let
       # `DISABLE_UPDATES = "1"` で更新経路の真実の所在を Homebrew / GitHub Releases に固定したのと同じく、
       # plugin 取得経路も環境差の少ない HTTPS に固定し、運用の予測可能性を高める defense-in-depth。
       CLAUDE_CODE_PLUGIN_PREFER_HTTPS = "1";
+      # v2.1.232 で追加。TaskCreate / TaskGet / TaskUpdate / TaskList / TodoWrite の todo/task 系
+      # ツールは Opus 4.8 / Sonnet 5 / Fable 5 / Mythos 5 と、それ以降のモデル（Opus 5 含む）では
+      # デフォルトで無効化された。v2.1.219 で `default` エイリアスの解決先が Opus 5 に変わり、
+      # ANTHROPIC_DEFAULT_OPUS_MODEL を pin していない限り、モデル選択次第で todo/task が
+      # 気付かないうちに消える。Claude Code 自身のマルチステップ計画や skill / workflow は
+      # これらのツールに依存しており、消えると「plan → track → complete」の追跡経路が失われる。
+      # 現在は `model` を明示 pin していないため、上流のモデルデフォルト変更（v2.1.219 と同種の
+      # サイレント切替）が起きると tool の欠落が発生しうる。`DISABLE_UPDATES = "1"` や
+      # `respondToBashCommands = false` と同じく、意図せぬ挙動変化を明示 pin で塞ぐ defense-in-depth。
+      CLAUDE_CODE_ENABLE_TODO_TOOLS = "1";
     };
     # `includeCoAuthoredBy` は deprecated。attribution 設定で commit / pr 双方の帰属表示を空文字列化して抑止する。
     # v2.1.183 で追加された `sessionUrl` は web / Remote Control セッションからの commit / PR に
