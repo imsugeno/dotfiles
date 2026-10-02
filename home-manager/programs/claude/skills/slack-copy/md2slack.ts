@@ -1,6 +1,7 @@
-#!/usr/bin/env -S deno run --allow-run=textutil,pbcopy
+#!/usr/bin/env -S deno run --allow-run=textutil,osascript
 
 import { marked } from "marked"
+import { encodeBase64 } from "@std/encoding/base64"
 
 // Read markdown from stdin
 const input = await new Response(Deno.stdin.readable).text()
@@ -57,9 +58,11 @@ md = md.replace(/%%CODEBLOCK_(\d+)%%/g, (_match, i: string) => codeBlocks[parseI
 const html = await marked(md)
 
 // --- Copy as rich text to clipboard ---
-// Slack reads the RTF flavor, not HTML. Convert HTML → RTF with textutil,
-// then hand the RTF to pbcopy so the clipboard carries a real RTF flavor.
+// Slack reads the RTF flavor, not HTML. Convert HTML → RTF with textutil.
 // The charset meta is required or textutil garbles non-ASCII text.
+// The clipboard must also carry a plain-text flavor: with RTF alone,
+// Slack pastes "undefined". pbcopy can set only one flavor, so write both
+// through NSPasteboard via JXA.
 async function run(command: string, args: string[], stdin: Uint8Array) {
   const cmd = new Deno.Command(command, {
     args,
@@ -82,4 +85,15 @@ async function run(command: string, args: string[], stdin: Uint8Array) {
 
 const htmlBytes = new TextEncoder().encode(`<meta charset="utf-8">${html}`)
 const rtf = await run("textutil", ["-stdin", "-format", "html", "-convert", "rtf", "-stdout"], htmlBytes)
-await run("pbcopy", ["-Prefer", "rtf"], rtf)
+
+const jxa = `
+ObjC.import("AppKit")
+function run(argv) {
+  const rtf = $.NSData.alloc.initWithBase64EncodedStringOptions(argv[0], 0)
+  const pb = $.NSPasteboard.generalPasteboard
+  pb.clearContents
+  pb.setDataForType(rtf, $.NSPasteboardTypeRTF)
+  pb.setStringForType($(argv[1]), $.NSPasteboardTypeString)
+}
+`
+await run("osascript", ["-l", "JavaScript", "-e", jxa, encodeBase64(rtf), input], new Uint8Array())

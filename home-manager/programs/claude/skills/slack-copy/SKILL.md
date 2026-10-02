@@ -22,24 +22,26 @@ Claude Codeへの指示を実行し、その結果をSlack に貼り付け可能
 /slack-copy
 ```
 
-引数なしで実行すると、直前のツール実行結果やコマンド出力をSlack向けリッチテキストとしてクリップボードにコピーします。
+引数なしで実行すると、直前の Claude の応答本文（Markdown）をSlack向けリッチテキストとしてクリップボードにコピーします。ツール実行結果やコマンド出力はコピー対象にしない。
 
 ## 実装手順
 
 1. 引数の有無を確認
 2. 引数がある場合:
    - 引数の指示を実行（コマンド実行、ファイル読み取り等）
-   - 実行結果の出力を取得
+   - その結果をもとに、ユーザーへの回答となる Markdown 本文を書く
 3. 引数がない場合:
-   - 会話履歴から直前のツール出力を取得
-4. 取得した Markdown テキストを `md2slack.ts` スクリプトに stdin で渡してクリップボードにコピー
+   - 会話履歴から直前の Claude の応答本文を取り出す
+4. 3 または 2 の Markdown 本文を、Claude 自身がヒアドキュメント内にそのまま書き出して `md2slack.ts` に渡す
 5. コピー完了を報告
+
+コピー対象は Claude が書いた文章そのもの。`md2slack.ts` の実行結果やその他のツール出力をコピー対象にしない。`md2slack.ts` は成功時に何も出力しないため、これを「直前の出力」とみなすと空の内容がコピーされる。本文を変数やファイル経由で渡そうとせず、ヒアドキュメント内に全文を書く。
 
 ## クリップボードへのコピー方法
 
 同じディレクトリにある `md2slack.ts` スクリプトを使用する。このスクリプトは stdin から Markdown を受け取り、Slack 向けの前処理 → HTML 変換 → リッチテキストとしてクリップボードにコピーを一括で行う。
 
-スクリプトは内部で `osascript` を使ってクリップボードへ書き込むため、サンドボックス下では失敗する。`md2slack.ts` を実行する Bash 呼び出しは `dangerouslyDisableSandbox: true` を指定してサンドボックスを無効化して実行する。
+スクリプトは内部で `textutil` と `osascript` を使ってクリップボードへ書き込むため、サンドボックス下では失敗する。`md2slack.ts` を実行する Bash 呼び出しは `dangerouslyDisableSandbox: true` を指定してサンドボックスを無効化して実行する。
 
 Markdown テキストはヒアドキュメントで渡す。`echo` で渡すと引用符・`$`・バッククォートがシェルに解釈されて内容が壊れる。
 
@@ -59,13 +61,12 @@ EOF
 6. 見出し `# Header` → `**Header**`（太字で代替）
 7. 退避したコードブロック・インラインコードを復元
 8. marked ライブラリで Markdown → HTML 変換
-9. HTML をリッチテキストとして macOS クリップボードにコピー（osascript 使用）
+9. `textutil` で HTML → RTF に変換し、RTF と元の Markdown（プレーンテキスト）の両方を `osascript`（JXA の NSPasteboard）でクリップボードに書き込む。RTF だけだと Slack に `undefined` と貼り付けられる
 
 ## 注意事項
 
-- `md2slack.ts` を実行する Bash 呼び出しは `dangerouslyDisableSandbox: true` を指定する。`osascript` でのクリップボード書き込みがサンドボックス下ではブロックされる
+- `md2slack.ts` を実行する Bash 呼び出しは `dangerouslyDisableSandbox: true` を指定する。クリップボード書き込みがサンドボックス下ではブロックされる
 - Deno が必要（`npm:marked` を自動取得）
-- macOS の `osascript` を使用してリッチテキストをクリップボードに設定
 - Slack は見出し・テーブルをサポートしないため、スクリプトが自動変換する
 - コードブロック内の内容は変換されない
 
@@ -82,5 +83,5 @@ User: /slack-copy README.mdの内容を要約して
 User: このコードの説明をして
 Assistant: [Markdown形式の説明を表示]
 User: /slack-copy
-→ 直前の説明をリッチテキストに変換してクリップボードにコピー
+→ 直前の Claude の説明文をリッチテキストに変換してクリップボードにコピー
 ```
